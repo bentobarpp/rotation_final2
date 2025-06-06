@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Detalhes do Tênis - Rotation</title>
+  <meta name="description" content="Detalhes do produto" />
+  <link rel="stylesheet" href="/Css/shop.css" />
+  <style>
+    body {
+      background: linear-gradient(to bottom, #26272B, #38393e 85%);
+      color: #f4f4f4;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    #nav {
+      background: #232426;
+      color: #fff;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      padding: 18px 0 14px 0;
+      gap: 15px;
+      font-size: 1.05rem;
+      box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.08);
+    }
+
+    #nav .logo {
+      height: 40px;
+      margin-right: 12px;
+      vertical-align: middle;
+    }
+
+    #nav a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 500;
+      margin: 0 7px;
+      border-radius: 5px;
+      padding: 7px 16px;
+      transition: background 0.25s;
+    }
+
+    #nav a:hover,
+    #nav a.selected {
+      background: rgba(108, 110, 254, 0.11);
+    }
+
+    #nav input[type="text"] {
+      padding: 7px 12px;
+      border-radius: 8px;
+      border: none;
+      background: #33353a;
+      color: #fff;
+      margin-left: 16px;
+      font-size: 1rem;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 15px 24px 30px 24px;
+      background: rgba(38, 38, 38, 0.9);
+      border-radius: 15px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+      color: #f4f4f4;
+      text-align: center;
+    }
+
+    .product-title {
+      margin-bottom: 26px;
+      font-size: 2.5rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .image-navigation {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 12px;
+      gap: 15px;
+    }
+
+    .image-navigation button {
+      background-color: #292929;
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.2rem;
+      font-weight: 700;
+      transition: background-color 0.3s ease;
+      user-select: none;
+      min-width: 90px;
+      box-shadow: 0 3px 10px rgb(0 0 0 / 0.3);
+    }
+
+    .image-navigation button:hover {
+      background-color: #434343;
+    }
+
+    .images-main {
+      max-width: 420px;
+      width: 100%;
+      max-height: 400px;
+      object-fit: contain;
+      border-radius: 15px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+      margin: 0 auto 20px auto;
+      display: block;
+      user-select: none;
+    }
+
+    .images-secondary {
+      display: flex;
+      justify-content: center;
+      margin-top: 18px;
+      gap: 12px;
+    }
+
+    .images-secondary img {
+      width: 85px;
+      height: 85px;
+      object-fit: cover;
+      border-radius: 10px;
+      cursor: pointer;
+      border: 3px solid transparent;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      transition: border-color 0.25s ease;
+      user-select: none;
+    }
+
+    .images-secondary img.selected {
+      border-color: #6c6efe;
+      box-shadow: 0 4px 15px rgba(108, 110, 254, 0.8);
+    }
+
+    .product-price-size {
+      font-weight: 700;
+      margin-top: 28px;
+      font-size: 1.3rem;
+      color: #fff;
+      user-select: none;
+    }
+
+    .product-info {
+      margin-top: 22px;
+      font-size: 1.1rem;
+      max-width: 680px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.5em;
+      color: #e1e3e7;
+      text-align: justify;
+      user-select: text;
+    }
+
+    .buy-btn {
+      margin: 35px auto 0 auto;
+      background: linear-gradient(90deg, #6c6efe 0%, #3f42dc 85%);
+      color: white;
+      padding: 14px 38px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 6px 20px rgba(108, 110, 254, 0.6);
+      cursor: pointer;
+      display: inline-block;
+      transition: background 0.4s, box-shadow 0.4s;
+      text-decoration: none;
+      user-select: none;
+      min-width: 230px;
+    }
+
+    .buy-btn:hover {
+      background: linear-gradient(90deg, #4f52bb 0%, #2526a3 100%);
+      box-shadow: 0 8px 30px rgba(69, 73, 194, 0.85);
+      transform: translateY(-3px) scale(1.04);
+    }
+
+    #message {
+      margin-top: 26px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #94a1ff;
+      min-height: 30px;
+      user-select: none;
+    }
+
+    @media (max-width: 520px) {
+      .container {
+        padding: 20px 15px 30px 15px;
+      }
+
+      .product-title {
+        font-size: 1.9rem;
+      }
+
+      .image-navigation button {
+        min-width: 75px;
+        font-size: 1rem;
+        padding: 8px 10px;
+      }
+
+      .images-secondary img {
+        width: 65px;
+        height: 65px;
+      }
+
+      .buy-btn {
+        min-width: 170px;
+        font-size: 1rem;
+        padding: 11px 28px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="nav">
+    <img class="logo" src="/Galery/BannerRotation.png" alt="logo rotation" />
+    <a href="/home.html">Home</a>
+    <a href="/shop.html">Shop</a>
+    <a href="/trocas.html">Trocas</a>
+    <a href="/social.html">Social</a>
+    <a href="/perfil.html">Perfil</a>
+    <a href="/novos-produtos.html">Novos Produtos</a>
+    <input type="text" id="txtBusca" placeholder="Buscar" />
+    <a class="logout-btn" href="/index.html">Sair</a>
+
+  </div>
+
+  <div class="container" id="productDetails">
+    <!-- Conteúdo carregado via JS -->
+  </div>
+
+  <footer class="rodape">
+    <p class="rodape-texto">Encontrou algum problema? Entre em contato através do e-mail
+      <a href="mailto:rotationsup@gmail.com.br">rotationsup@gmail.com.br</a>
+    </p>
+  </footer>
+
+  <script>
+    function getQueryParam(param) {
+      const urlSearchParams = new URLSearchParams(window.location.search);
+      return urlSearchParams.get(param);
+    }
+
+    const productId = getQueryParam("id");
+
+    const siteProducts = {
+      "site_nb9060": {
+        name: "New Balance 9060",
+        images: ["/Galery/nb.png", "/Galery/nb_side.png", "/Galery/nb_back.png"],
+        price: 1200,
+        size: 42,
+        description: "Tênis New Balance 9060, modelo clássico e confortável."
+      },
+      "site_vansknu": {
+        name: "Vans Knu School",
+        images: ["/Galery/knu.png", "/Galery/knu_side.png", "/Galery/knu_back.png"],
+        price: 600,
+        size: 40,
+        description: "Tênis Vans Knu School, estilo e qualidade."
+      },
+      "site_jordan1": {
+        name: "Jordan 1",
+        images: ["/Galery/j1.webp", "/Galery/j1_side.webp", "/Galery/j1_back.webp"],
+        price: 3500,
+        size: 44,
+        description: "Jordan 1, um clássico dos tênis de basquete."
+      },
+      "site_adidassamba": {
+        name: "Adidas Samba",
+        images: ["/Galery/samba.png", "/Galery/samba_side.png", "/Galery/samba_back.png"],
+        price: 800,
+        size: 39,
+        description: "Adidas Samba, estilo e conforto para o dia a dia."
+      }
+    };
+
+    function displayProduct(product) {
+      const container = document.getElementById("productDetails");
+      container.innerHTML = `
+        <h1 class="product-title">${product.name}</h1>
+        <div class="image-navigation">
+          <button id="prevImage" type="button" aria-label="Imagem anterior">&laquo; Anterior</button>
+          <img src="${product.images[0]}" alt="${product.name}" class="images-main" id="mainImage" />
+          <button id="nextImage" type="button" aria-label="Próxima imagem">Próximo &raquo;</button>
+        </div>
+        <div class="images-secondary" id="secondaryImages">
+          ${product.images
+            .map(
+              (img, idx) => `<img src="${img}" alt="Imagem ${idx + 1}" data-index="${idx}" />`
+            )
+            .join("")}
+        </div>
+        <p class="product-price-size">Preço: R$ ${product.price.toFixed(2).replace('.', ',')} | Tamanho: ${product.size}</p>
+        <p class="product-info">${product.description}</p>
+        <a href="compra.html?id=${encodeURIComponent(productId)}" class="buy-btn" id="btnComprar">Comprar Agora</a>
+        <div id="message" role="alert" aria-live="polite"></div>
+      `;
+
+      let currentIndex = 0;
+      const mainImage = document.getElementById("mainImage");
+      const secondaryImages = document.querySelectorAll("#secondaryImages img");
+      const prevBtn = document.getElementById("prevImage");
+      const nextBtn = document.getElementById("nextImage");
+
+      function updateMainImage(i) {
+        if (i < 0) i = product.images.length - 1;
+        if (i >= product.images.length) i = 0;
+        currentIndex = i;
+        mainImage.src = product.images[i];
+        secondaryImages.forEach(img => img.classList.remove("selected"));
+        if (secondaryImages[i]) {
+          secondaryImages[i].classList.add("selected");
+        }
+      }
+
+      prevBtn.addEventListener('click', () => updateMainImage(currentIndex - 1));
+      nextBtn.addEventListener('click', () => updateMainImage(currentIndex + 1));
+      secondaryImages.forEach(img => {
+        img.addEventListener('click', () => {
+          updateMainImage(parseInt(img.dataset.index));
+        });
+      });
+
+      updateMainImage(0);
+    }
+
+    function getUserProduct(index) {
+      let shoes = JSON.parse(localStorage.getItem("shoes")) || [];
+      if (shoes[index]) {
+        let s = shoes[index];
+        return {
+          name: s.name,
+          images: s.images,
+          price: parseFloat(s.price) || 0,
+          size: s.size || "N/D",
+          description: s.description || "Sem descrição"
+        };
+      }
+      return null;
+    }
+
+    if (!productId) {
+      document.getElementById('productDetails').innerHTML = '<p>Produto não encontrado.</p>';
+    } else if (productId.startsWith("site_")) {
+      if (siteProducts[productId]) displayProduct(siteProducts[productId]);
+      else document.getElementById('productDetails').innerHTML = '<p>Produto não encontrado.</p>';
+    } else if (productId.startsWith("user_")) {
+      let i = parseInt(productId.split("_")[1]);
+      let userProd = getUserProduct(i);
+      if (userProd) displayProduct(userProd);
+      else document.getElementById('productDetails').innerHTML = '<p>Produto não encontrado.</p>';
+    } else {
+      document.getElementById('productDetails').innerHTML = '<p>Produto não encontrado.</p>';
+    }
+  </script>
+</body>
+
+</html>

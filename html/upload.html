@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Upload de Tênis - Rotation</title>
+    <meta name="description" content="Venda seu tênis exclusivo" />
+    <link rel="stylesheet" href="/Css/shop.css" />
+    <style>
+        body {
+            background: linear-gradient(to bottom, #26272B, #38393e 85%);
+            color: #f4f4f4;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        #nav {
+            background: #232426;
+            color: #fff;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            padding: 18px 0 14px 0;
+            gap: 15px;
+            font-size: 1.05rem;
+            box-shadow: 0 4px 12px 0 rgba(0,0,0,0.08);
+        }
+        #nav .logo {
+            height: 40px;
+            margin-right: 12px;
+            vertical-align: middle;
+        }
+        #nav a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            margin: 0 7px;
+            border-radius: 5px;
+            padding: 7px 16px;
+            transition: background 0.25s;
+        }
+        #nav a:hover,
+        #nav a.selected {
+            background: rgba(108,110,254,0.11);
+        }
+        #nav input[type="text"] {
+            padding: 7px 12px;
+            border-radius: 8px;
+            border: none;
+            background: #33353a;
+            color: #fff;
+            margin-left: 16px;
+            font-size: 1rem;
+        }
+        .upload-container {
+            max-width: 435px;
+            margin: 45px auto 35px auto;
+            padding: 34px 26px 25px 26px;
+            background: rgba(38, 38, 38, 0.97);
+            border-radius: 17px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .upload-container h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 19px;
+            text-align: center;
+            letter-spacing: .5px;
+        }
+        .upload-container label {
+            width: 100%;
+            text-align: left;
+            font-size: 1rem;
+            margin-top: 13px;
+            margin-bottom: 5px;
+            color: #A9A9A9;
+            font-weight: 600;
+            letter-spacing: .1px;
+        }
+        .upload-container input, .upload-container select, .upload-container textarea {
+            width: 100%;
+            margin-bottom: 8px;
+            padding: 10px 12px;
+            border-radius: 9px;
+            border: none;
+            background: #222228;
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+            box-sizing: border-box;
+            transition: background .22s;
+        }
+        .upload-container input:focus,
+        .upload-container select:focus,
+        .upload-container textarea:focus {
+            background: #34343a;
+        }
+        .upload-container input[type="file"] {
+            padding: 7px 0;
+            background: none;
+        }
+        .upload-container textarea {
+            resize: vertical;
+            min-height: 65px;
+            max-height: 200px;
+        }
+        .upload-container .info {
+            display: inline;
+            color: #A9A9A9;
+            font-size: .93rem;
+        }
+        .upload-container button.buy-btn {
+            width: 100%;
+            background: linear-gradient(90deg,#434343 0%,#262626 100%);
+            color: #fff;
+            font-size: 1.13rem;
+            font-weight: 700;
+            letter-spacing: .3px;
+            border: none;
+            border-radius: 10px;
+            padding: 13px 0;
+            margin-top: 20px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+            transition: background 0.3s, transform 0.2s;
+        }
+        .upload-container button.buy-btn:hover {
+            background: linear-gradient(90deg, #292929 0%, #434343 100%);
+            transform: translateY(-2px) scale(1.03);
+        }
+        @media (max-width: 600px) {
+            .upload-container {
+                max-width: 95vw;
+                padding: 8vw 2vw 14vw 2vw;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div id="nav">
+    <img class="logo" src="/Galery/BannerRotation.png" alt="logo rotation">
+    <a href="/home.html">Home</a>
+    <a href="/shop.html">Shop</a>
+    <a href="/trocas.html">Trocas</a>
+    <a href="/social.html">Social</a>
+    <a href="/perfil.html">Perfil</a>
+    <a href="/novos-produtos.html">Novos Produtos</a>
+    <input type="text" id="txtBusca" placeholder="Buscar" />
+    <a class="logout-btn" href="/index.html">Sair</a>
+
+</div>
+
+<div class="upload-container">
+    <h2>Venda seu Tênis</h2>
+    <form id="uploadForm" autocomplete="off">
+        <label for="shoeName">Nome do Tênis</label>
+        <input type="text" id="shoeName" placeholder="Ex: Nike Air Max" required />
+
+        <label for="shoePrice">Preço (R$)</label>
+        <input type="number" min="0" step="0.01" id="shoePrice" placeholder="Ex: 499.90" required />
+
+        <label for="shoeSize">Tamanho</label>
+        <select id="shoeSize" required>
+            <option value="" disabled selected>Escolha um tamanho</option>
+            <option value="30">30</option><option value="31">31</option>
+            <option value="32">32</option><option value="33">33</option>
+            <option value="34">34</option><option value="35">35</option>
+            <option value="36">36</option><option value="37">37</option>
+            <option value="38">38</option><option value="39">39</option>
+            <option value="40">40</option><option value="41">41</option>
+            <option value="42">42</option><option value="43">43</option>
+            <option value="44">44</option><option value="45">45</option>
+            <option value="46">46</option>
+        </select>
+
+        <label for="shoeDescription">Descrição</label>
+        <textarea id="shoeDescription" maxlength="400" placeholder="Descreva o produto, estado de uso, detalhes, etc." required></textarea>
+
+        <label for="shoeMainImage">URL da Imagem Principal</label>
+        <input type="text" id="shoeMainImage" placeholder="Ex: https://seusite.com/imagem1.jpg" required />
+
+        <label for="shoeImagesAdditional">URL das Imagens Secundárias
+            <span class="info">(opcional, até 3 URLs separadas por vírgula)</span>
+        </label>
+        <input type="text" id="shoeImagesAdditional" placeholder="Ex: https://seusite.com/img2.jpg, https://seusite.com/img3.jpg" />
+
+        <button type="submit" class="buy-btn">Adicionar Tênis</button>
+    </form>
+</div>
+
+<footer class="rodape">
+    <p class="rodape-texto">
+        Encontrou algum problema? Entre em contato através do e-mail
+        <a href="mailto:rotationsup@gmail.com.br">rotationsup@gmail.com.br</a>
+    </p>
+</footer>
+
+<script>
+document.getElementById("uploadForm").addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    // Get values from form fields
+    var shoeName = document.getElementById("shoeName").value.trim();
+    // Using step="0.01" for price input for better precision
+    var shoePrice = parseFloat(document.getElementById("shoePrice").value.trim()) || 0; 
+    var shoeSize = document.getElementById("shoeSize").value;
+    var shoeDescription = document.getElementById("shoeDescription").value.trim();
+    var shoeMainImage = document.getElementById("shoeMainImage").value.trim();
+    var shoeImagesAdditional = document.getElementById("shoeImagesAdditional").value.trim();
+
+    // Basic validation
+    if (!shoeName || !shoePrice || !shoeSize || !shoeDescription || !shoeMainImage) {
+        alert("Por favor, preencha todos os campos obrigatórios (Nome, Preço, Tamanho, Descrição, Imagem Principal).");
+        return;
+    }
+    
+    // Check for logged-in user
+    const usuarioString = localStorage.getItem("usuarioLogado");
+    if (!usuarioString) {
+        alert("Você precisa estar logado para vender um tênis. Redirecionando para a página de login.");
+        window.location.href = '/index.html'; // Redirect to login page
+        return;
+    }
+
+    const usuario = JSON.parse(usuarioString);
+    if (!usuario || !usuario.id) {
+        alert("Dados do usuário logado inválidos. Por favor, faça login novamente. Redirecionando para a página de login.");
+        window.location.href = '/index.html'; // Redirect to login page
+        return;
+    }
+    
+    // Prepare additional images (if any)
+    let additionalImagesArray = [];
+    if (shoeImagesAdditional) {
+        additionalImagesArray = shoeImagesAdditional.split(',').map(url => url.trim()).filter(url => url !== '');
+    }
+
+    // Construct the data object for the server
+    const shoeData = {
+        nome: shoeName,
+        marca: shoeName.split(" ")[0], // Uses the first word of the name as the brand
+        preco: shoePrice,
+        tamanho: shoeSize,
+        descricao: shoeDescription,
+        imagemUrl: shoeMainImage,
+        imagensAdicionais: additionalImagesArray, // New field for additional images
+        usuario_id: usuario.id
+    };
+
+    console.log("Dados do tênis a serem enviados:", shoeData);
+    
+    // Send data to the server
+    fetch('/create-tenis', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(shoeData)
+    })
+    .then(response => {
+        if (response.ok) {
+            alert('Tênis adicionado com sucesso!');
+            // Optional: Clear form fields after successful submission
+            document.getElementById("uploadForm").reset();
+            // Redirect to a product detail page or shop page
+            window.location.href = '/shop.html'; 
+            
+        } else {
+            // If response is not OK, try to parse the error message from the server
+            return response.json().then(err => {
+                throw new Error(err.message || 'Erro desconhecido ao enviar o tênis.');
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Erro ao enviar o tênis:', error);
+        alert('Erro ao enviar o tênis: ' + error.message);
+    });
+});
+</script>
+
+</body>
+</html>

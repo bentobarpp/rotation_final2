@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Finalizar Compra - Rotation</title>
+  <meta name="description" content="Finalização de compra com cupons de desconto." />
+  <style>
+    body {
+      background: linear-gradient(to bottom, #26272B, #38393e 85%);
+      color: #f4f4f4;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+    main {
+      max-width: 580px;
+      margin: 40px auto 40px auto;
+      background: rgba(38,38,38,0.96);
+      border-radius: 20px;
+      box-shadow: 0 7px 32px #0008;
+      padding: 36px 5vw 18px 5vw;
+    }
+    h1 {
+      font-size: 2.1rem;
+      font-weight: 700;
+      letter-spacing: .6px;
+      text-align: center;
+      margin: 0 0 19px;
+      color: #fff;
+    }
+    img.product-img {
+      display: block;
+      margin: 0 auto 14px auto;
+      border-radius: 14px;
+      max-width: 260px;
+      box-shadow: 0 4px 19px #0005;
+      background: #222;
+    }
+    .info-main {
+      text-align: center;
+      margin-bottom: 9px;
+      color: #bbccff;
+      font-size: 1.14rem;
+      font-weight: 600;
+      user-select: text;
+    }
+    .price-main {
+      margin-bottom: 17px;
+      color: #fff;
+      font-size: 1.22rem;
+      font-weight: bold;
+      letter-spacing: .5px;
+      text-align: center;
+    }
+    label {
+      display: block;
+      margin: 17px 0 8px 0;
+      font-weight: 600;
+      color: #bbccff;
+    }
+    input[type="text"], input[type="email"], input[type="tel"], select, textarea {
+      width: 100%;
+      padding: 12px 15px;
+      border-radius: 9px;
+      border: none;
+      background: #22252f;
+      color: white;
+      font-size: 1rem;
+      margin-bottom: 8px;
+      box-sizing: border-box;
+      transition: background 0.23s;
+    }
+    input[type="text"]:focus, input[type="email"]:focus, input[type="tel"]:focus, select:focus, textarea:focus {
+      background: #343743;
+      outline: none;
+    }
+    select { cursor: pointer; }
+    textarea { min-height: 80px; max-height: 220px; resize: vertical; }
+    .coupon-area {
+      margin: 30px 0 14px 0; display: flex; gap: 8px; align-items: center;
+    }
+    .coupon-area input[type="text"] { margin-bottom: 0; }
+    .btn-coupon, .btn-final {
+      background: linear-gradient(90deg,#6c6efe 0%,#3f42dc 85%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 22px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.27s, box-shadow 0.21s;
+      margin-top: 0;
+      box-shadow: 0 2px 9px #6c6efe46;
+      user-select: none;
+      letter-spacing: .6px;
+    }
+    .btn-coupon { max-width: 140px;}
+    .btn-coupon:hover, .btn-final:hover {
+      background: linear-gradient(90deg, #393bc0 0%, #4346cc 100%);
+      box-shadow: 0 7px 16px #6c6efe84;
+    }
+    #desconto-info {
+      color: #90ee90;
+      font-weight: 700;
+      min-height: 22px;
+      font-size: 1.01rem;
+      margin-top: 2px;
+      text-align: center;
+      margin-bottom: 18px;
+    }
+    .cupom-lista {
+      margin:22px 0 0 0;border-radius:10px;box-shadow:0 3px 17px #0002;background:#23243a;padding:12px 18px;
+    }
+    .cupom-lista ul{padding:0;margin:0;list-style:none;}
+    .cupom-lista li{color:#bbccff;font-size:1rem;margin:5px 0;display:flex;justify-content:space-between;align-items:center;}
+    .cupom-lista li button{background:#cf2e2e;color:#fff;font-size:.95rem;border:none;border-radius:8px;padding:3px 12px;cursor:pointer;}
+    .cupom-lista li button:hover{background:#9d2323;}
+    @media (max-width:600px){main{padding:16px 4vw 18px 4vw} .coupon-area{flex-direction:column;gap:10px} }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Finalizar Compra</h1>
+    <img id="productImg" alt="Imagem do Tênis" class="product-img" />
+
+    <div id="productName" class="info-main"></div>
+    <div id="productPrice" class="price-main"></div>
+    <div id="productSize" class="info-main"></div>
+
+    <form id="purchaseForm" autocomplete="off">
+      <div class="coupon-area">
+        <input type="text" id="couponInput" placeholder="Cupom de desconto opcional" />
+        <button type="button" id="applyCouponBtn" class="btn-coupon">Aplicar</button>
+      </div>
+      <div id="desconto-info"></div>
+
+      <label for="fullName">Nome Completo</label>
+      <input type="text" id="fullName" required />
+
+      <label for="email">E-mail</label>
+      <input type="email" id="email" required />
+
+      <label for="phone">Telefone</label>
+      <input type="tel" id="phone" required />
+
+      <label for="address">Endereço</label>
+      <input type="text" id="address" required />
+
+      <label for="city">Cidade</label>
+      <input type="text" id="city" required />
+
+      <label for="state">Estado</label>
+      <select id="state" required>
+        <option value="">Selecione</option>
+        <option value="AC">AC</option><option value="AL">AL</option><option value="AP">AP</option>
+        <option value="AM">AM</option><option value="BA">BA</option><option value="CE">CE</option>
+        <option value="DF">DF</option><option value="ES">ES</option><option value="GO">GO</option>
+        <option value="MA">MA</option><option value="MT">MT</option><option value="MS">MS</option>
+        <option value="MG">MG</option><option value="PA">PA</option><option value="PB">PB</option>
+        <option value="PR">PR</option><option value="PE">PE</option><option value="PI">PI</option>
+        <option value="RJ">RJ</option><option value="RN">RN</option><option value="RS">RS</option>
+        <option value="RO">RO</option><option value="RR">RR</option><option value="SC">SC</option>
+        <option value="SP">SP</option><option value="SE">SE</option><option value="TO">TO</option>
+      </select>
+
+      <label for="zipCode">CEP</label>
+      <input type="text" id="zipCode" required pattern="\\d{5}-?\\d{3}" placeholder="00000-000" />
+
+      <label for="notes">Observações (opcional)</label>
+      <textarea id="notes" placeholder="Alguma referência de entrega, etc."></textarea>
+
+      <button type="submit" class="btn-final">Finalizar Compra</button>
+    </form>
+
+    <div id="successMsg" style="margin-top: 28px; color:#63ffa3; text-align:center; font-size:1.2rem; font-weight:700;"></div>
+
+    <div class="cupom-lista">
+      <b>Cupons Disponíveis:</b>
+      <ul id="couponList"></ul>
+      <div style="display:flex;gap:10px;margin-top:12px;">
+        <input type="text" id="newCouponInput" maxlength="14" placeholder="Cupom novo (ex: BLACK20)">
+        <input type="number" id="newCouponValue" min="1" max="90" step="1" placeholder="%">
+        <button type="button" class="btn-coupon" id="addCouponBtn">Adicionar Cupom</button>
+      </div>
+    </div>
+  </main>
+  <script>
+    // --- Cupons salvos em localStorage para persistência ---
+    let coupons = JSON.parse(localStorage.getItem("coupons")) || {
+      "OFF10": 0.10,
+      "ROTATION15": 0.15,
+      "WELCOME5": 0.05
+    };
+    // Produto do site
+    const defaultProducts = {
+      "site_nb9060": {name: "New Balance 9060", price: 1200, size: 42, image: "/Galery/nb.png"},
+      "site_vansknu": {name: "Vans Knu School", price: 600, size: 40, image: "/Galery/knu.png"},
+      "site_jordan1": {name: "Jordan 1", price: 3500, size: 44, image: "/Galery/j1.webp"},
+      "site_adidassamba": {name: "Adidas Samba", price: 800, size: 39, image: "/Galery/samba.png"},
+    };
+    function formatPrice(val){return "R$ " + (val).toFixed(2).replace('.',',');}
+    function getQueryParam(param) {
+      return new URLSearchParams(window.location.search).get(param);
+    }
+    // Carregar produto
+    const productId = getQueryParam("id");
+    let product = null;
+    let userShoes = JSON.parse(localStorage.getItem("shoes")) || [];
+    if (productId && productId.startsWith("site_")) {
+      product = defaultProducts[productId];
+    } else if (productId && productId.startsWith("user_")) {
+      let idx = parseInt(productId.split("_")[1]);
+      if (!isNaN(idx) && userShoes[idx]) {
+        product = userShoes[idx];
+        product.price = parseFloat(product.price);
+        product.size = product.size || "N/D";
+        product.image = product.images ? product.images[0] : "";
+      }
+    }
+    if (!product) {
+      document.body.innerHTML = "<h2 style='text-align:center;margin-top:80px;'>Produto não encontrado.</h2>";
+    } else {
+      document.getElementById("productImg").src = product.image || "";
+      document.getElementById("productImg").alt = product.name;
+      document.getElementById("productName").textContent = product.name;
+      document.getElementById("productPrice").textContent = "Preço: " + formatPrice(product.price);
+      document.getElementById("productSize").textContent = "Tamanho: " + product.size;
+    }
+    // Aplica o cupom de desconto
+    let appliedDiscount = 0;
+    document.getElementById("applyCouponBtn").onclick = function() {
+      const code = document.getElementById("couponInput").value.trim().toUpperCase();
+      const info = document.getElementById("desconto-info");
+      if (code in coupons) {
+        appliedDiscount = coupons[code];
+        const discounted = product.price * (1 - appliedDiscount);
+        info.textContent = `Cupom aplicado: -${(appliedDiscount*100).toFixed(0)}%. Preço com desconto: ${formatPrice(discounted)}`;
+      } else {
+        info.textContent = "Cupom inválido.";
+        appliedDiscount = 0;
+      }
+    };
+    // Adiciona cupom novo
+    document.getElementById("addCouponBtn").onclick = function() {
+      const cup = document.getElementById("newCouponInput").value.trim().toUpperCase().replace(/\s/g,'');
+      const val = parseInt(document.getElementById("newCouponValue").value);
+      if (cup.length<2 || isNaN(val) || val < 1 || val > 90) { alert('Preencha o código e valor corretamente.'); return;}
+      if (coupons[cup]!==undefined) {alert("Já existe esse cupom.");return;}
+      coupons[cup]=val/100;
+      localStorage.setItem("coupons",JSON.stringify(coupons));
+      renderCouponList();
+      document.getElementById("newCouponInput").value = ""; document.getElementById("newCouponValue").value = "";
+    };
+    // Remove cupom
+    function removeCoupon(code){
+      delete coupons[code];
+      localStorage.setItem('coupons',JSON.stringify(coupons));
+      renderCouponList();
+    }
+    // Renderiza lista de cupons
+    function renderCouponList(){
+      let ul = document.getElementById("couponList");
+      ul.innerHTML = '';
+      Object.keys(coupons).forEach(code=>{
+        let li = document.createElement('li');
+        li.innerHTML = `<span>${code} - ${Math.round(coupons[code]*100)}%</span>
+          <button onclick="removeCoupon('${code}')">Excluir</button>`;
+        ul.appendChild(li);
+      });
+    }
+    window.removeCoupon = removeCoupon;
+    renderCouponList();
+    // Finaliza compra
+    document.getElementById("purchaseForm").addEventListener("submit", function(e){
+      e.preventDefault();
+      let fullName = document.getElementById("fullName").value.trim();
+      let email = document.getElementById("email").value.trim();
+      let phone = document.getElementById("phone").value.trim();
+      let address = document.getElementById("address").value.trim();
+      let city = document.getElementById("city").value.trim();
+      let state = document.getElementById("state").value;
+      let zip = document.getElementById("zipCode").value.trim();
+      if (!(fullName && email && phone && address && city && state && zip)) {
+        document.getElementById("successMsg").style.color="#ff6464";
+        document.getElementById("successMsg").textContent="Preencha todos os campos obrigatórios!";
+        return;
+      }
+      document.getElementById("successMsg").style.color="#63ffa3";
+      document.getElementById("successMsg").textContent="Compra efetuada com sucesso! Obrigado por comprar na Rotation. Em breve entraremos em contato!";
+      this.reset();
+      appliedDiscount = 0;
+      document.getElementById("desconto-info").textContent="";
+    });
+  </script>
+</body>
+</html>

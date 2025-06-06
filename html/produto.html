@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Detalhes do Produto</title>
+    <meta name="description" content="Veja detalhes do produto selecionado para troca.">
+    <style>
+        body {
+            background: #26272B;
+            color: #f4f4f4;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: rgba(38, 38, 38, 0.92);
+            border-radius: 16px;
+            box-shadow: 0 6px 26px #181c2855;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .product-gallery {
+            display: flex;
+            gap: 10px;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .product-gallery img {
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+            border-radius: 10px;
+            object-fit: cover;
+            box-shadow: 0 2px 10px #0005;
+            transition: transform 0.3s;
+        }
+
+        .product-gallery img:hover {
+            transform: scale(1.05);
+        }
+
+        .product-details {
+            text-align: center;
+        }
+
+        .product-name {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .description,
+        .request {
+            margin-top: 10px;
+            color: #ddf;
+            font-size: 1.1rem;
+        }
+
+        .buttons-container {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 1.1rem;
+        }
+
+        .btn-proposta {
+            background: linear-gradient(90deg, #6c6efe 0%, #3237bb 100%);
+            color: white;
+        }
+
+        .btn-proposta:hover {
+            background: #2b2ffb;
+        }
+
+        .btn-chat {
+            background: #434647;
+            color: #bbccee;
+        }
+
+        .btn-chat:hover {
+            background: #686d83;
+            color: white;
+        }
+
+        .btn-voltar {
+            background: #444;
+            color: #ddd;
+        }
+
+        .btn-voltar:hover {
+            background: #666;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container" id="product-container">
+        <!-- Content will be populated here by JavaScript -->
+    </div>
+
+    <script>
+   
+
+        function init() {
+            const product = JSON.parse(localStorage.getItem('sneakers')) || [];
+
+            console.log(product);
+            
+            if (!product) {
+                document.getElementById('product-container').innerHTML = '<p>Produto não encontrado.</p>';
+                return;
+            }
+
+            const container = document.getElementById('product-container');
+            container.innerHTML = `
+                <div class="product-details">
+                    <h1 class="product-name">${product.nome}</h1>
+                    <p class="description">${product.descricao ? product.descricao : "Sem descrição disponível."}</p>
+                    <p class="request"><strong>Trocar por:</strong> ${product.request}</p>
+                </div>
+                <div class="buttons-container">
+                    <button class="btn-proposta" onclick="makeProposal">Fazer Proposta</button>
+                    <button class="btn-chat" onclick="startChat">Conversar</button>
+                    <button class="btn-voltar" onclick="window.history.back()">Voltar</button>
+                </div>
+            `;
+        }
+
+        function makeProposal(productId) {
+            alert("Função de proposta não implementada para o produto ID: " + productId);
+            // Aqui você poderia abrir uma modal ou formulário para enviar propostas
+        }
+
+        function startChat(productId) {
+            const chatId = 'user_' + productId;
+            alert("Iniciando chat para o produto ID: " + productId);
+            // Aqui você deveria redirecionar ou abrir uma janela/modal de chat específica
+        }
+
+        // Inicializa a página ao carregar
+        window.onload = init;
+    </script>
+</body>
+
+</html>

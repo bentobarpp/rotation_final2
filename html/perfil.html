@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurações do Perfil - Rotation</title>
+    <meta name="description" content="Gerencie suas informações de perfil na Rotation.">
+    <link rel="stylesheet" href="/Css/perfil.css">
+    <style>
+        body {
+            background: linear-gradient(to bottom, #26272B, #38393e 85%);
+            color: #f4f4f4;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        #nav {
+            background: #232426;
+            color: white;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            padding: 18px 0;
+            gap: 15px;
+            font-size: 1.05rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
+        }
+
+        #nav .logo {
+            height: 40px;
+            margin-right: 12px;
+        }
+
+        #nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            margin: 0 8px;
+            padding: 7px 20px;
+            border-radius: 6px;
+            transition: background 0.3s;
+        }
+
+        #nav a:hover,
+        #nav a.selected {
+            background-color: rgba(108, 110, 254, 0.15);
+        }
+
+        #nav input[type="text"] {
+            padding: 7px 12px;
+            border-radius: 8px;
+            border: none;
+            background-color: #33353a;
+            color: white;
+            margin-left: 20px;
+            font-size: 1rem;
+        }
+
+        #cabecalho {
+            max-width: 900px;
+            margin: 40px auto 30px;
+            padding: 0 20px;
+            text-align: center;
+        }
+
+        #cabecalho h1 {
+            font-size: 2.4rem;
+            margin-bottom: 8px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        #cabecalho p {
+            font-size: 1.15rem;
+            color: #bbccff;
+            font-weight: 600;
+        }
+
+        main.conteudo {
+            max-width: 900px;
+            margin: 0 auto 50px;
+            padding: 0 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+
+        .cartao-missao,
+        .cartao-market {
+            background-color: rgba(38, 38, 38, 0.93);
+            border-radius: 14px;
+            box-shadow: 0 5px 22px rgba(0, 0, 0, 0.13);
+            padding: 32px 28px;
+            color: #d6daf8;
+            font-size: 1.08rem;
+            width: 410px;
+            max-width: 98vw;
+            margin: 6px 0;
+        }
+
+        .cartao-missao h2,
+        .cartao-market h2 {
+            color: #fff;
+            font-size: 1.42rem;
+            margin-bottom: 18px;
+            font-weight: 700;
+            letter-spacing: .04em;
+        }
+
+        form label {
+            display: block;
+            margin-top: 18px;
+            margin-bottom: 7px;
+            font-weight: 600;
+        }
+
+        form input[type="text"],
+        form input[type="email"],
+        form input[type="password"] {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 8px;
+            border: none;
+            background-color: #22252f;
+            color: white;
+            font-size: 1rem;
+            box-sizing: border-box;
+            margin-bottom: 2px;
+        }
+
+        form input[type="text"]:focus,
+        form input[type="email"]:focus,
+        form input[type="password"]:focus {
+            background-color: #3a3e53;
+            outline: none;
+        }
+
+        form button[type="submit"] {
+            margin-top: 28px;
+            width: 100%;
+            padding: 14px 0;
+            background: linear-gradient(90deg, #6c6efe 0%, #3f42dc 85%);
+            color: white;
+            font-weight: 700;
+            font-size: 1.15rem;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        form button[type="submit"]:hover {
+            background: linear-gradient(90deg, #4f52bb 0%, #2526a3 100%);
+            transform: translateY(-2px);
+        }
+
+        /* Botão de exclusão */
+        .btn-excluir {
+            margin-top: 18px;
+            width: 100%;
+            padding: 14px 0;
+            background-color: #e74c3c;
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.15rem;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background-color 0.3s, filter 0.2s;
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.10);
+        }
+
+        .btn-excluir:hover {
+            background-color: #c0392b;
+            filter: brightness(1.1);
+        }
+
+        .cartao-market ul {
+            padding-left: 0;
+            margin: 0;
+            list-style: none;
+        }
+
+        .cartao-market ul li {
+            margin-bottom: 15px;
+            font-size: 1.07rem;
+            color: #bbc5ff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cartao-market ul li button {
+            background-color: #494ba8;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 8px 18px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: background-color 0.25s;
+        }
+
+        .cartao-market ul li button:hover {
+            background-color: #6c6efe;
+            box-shadow: 0 0 12px #6c6efeaa;
+        }
+
+        .rodape {
+            background-color: #232426;
+            color: white;
+            text-align: center;
+            padding: 32px 2vw 26px 2vw;
+            margin-top: 0;
+            border-radius: 14px 14px 0 0;
+            font-size: 1.05rem;
+        }
+
+        .rodape a {
+            color: #90aaff;
+            text-decoration: underline;
+        }
+
+        @media (max-width:650px) {
+            main.conteudo {
+                flex-direction: column;
+                gap: 30px;
+            }
+
+            .cartao-missao,
+            .cartao-market {
+                width: 98vw;
+                padding: 14vw 4vw;
+            }
+        }
+    </style>
+    <script>
+        function excluirConta() {
+            if (confirm('Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita.')) {
+                // Aqui você pode adicionar uma chamada para seu backend via fetch/AJAX
+                alert('Usuário excluído');
+                // Redirecionamento ou logout podem ser feitos aqui
+                // window.location.href = "/logout.html";
+            }
+        }
+    </script>
+</head>
+
+<body>
+
+    <div id="nav">
+        <img class="logo" src="/Galery/BannerRotation.png" alt="logo rotation">
+        <a href="/home.html">Home</a>
+        <a href="/trocas.html">Trocas</a>
+        <a href="/shop.html">Shop</a>
+        <a href="/social.html">Social</a>
+        <a href="/perfil.html" class="selected">Perfil</a>
+        <input type="text" id="txtBusca" placeholder="Buscar" />
+        <a class="logout-btn" href="/index.html">Sair</a>
+
+    </div>
+
+    <section id="cabecalho">
+        <h1>Configurações do Perfil</h1>
+        <p>Atualize suas informações pessoais.</p>
+    </section>
+
+    <main class="conteudo">
+        <article id="formulario-perfil" class="cartao-missao">
+            <h2>Atualizar Informações</h2>
+            <form>
+                <label for="nome">Seu Nome:</label>
+                <input type="text" id="nome" name="nome" required>
+
+                <label for="email">Seu Email:</label>
+                <input type="email" id="email" name="email" required>
+
+                <label for="senha">Nova Senha:</label>
+                <input type="password" id="senha" name="senha">
+
+                <label for="confirma-senha">Confirme a Nova Senha:</label>
+                <input type="password" id="confirma-senha" name="confirma-senha">
+
+                <button type="submit">Salvar Alterações</button>
+            </form>
+            <button class="btn-excluir" onclick="excluirConta()">Excluir Conta</button>
+        </article>
+
+        <article id="market" class="cartao-market">
+            <h2>Market</h2>
+            <ul>
+                <li>Acompanhe seu pedido. <button>Rastrear</button></li>
+                <li>Verifique seus anúncios. <button>Acompanhar</button></li>
+                <li>Avaliar vendedores/trocadores. <button>Feedback</button></li>
+            </ul>
+        </article>
+    </main>
+
+    <footer class="rodape">
+        <p class="rodape-texto">Encontrou algum problema? Entre em contato através do e-mail <a
+                href="mailto:rotationsup@gmail.com.br">rotationsup@gmail.com.br</a></p>
+    </footer>
+</body>
+
+</html>
