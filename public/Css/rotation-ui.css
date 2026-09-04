@@ -1,5 +1,35 @@
 /* Sistema visual compartilhado: animações de entrada, skeletons e estado vazio */
 
+html {
+  background: #26272b;
+}
+
+body {
+  overscroll-behavior-y: none;
+}
+
+.nav-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7c3aed, #6366f1);
+  color: #fff !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  margin-left: 6px;
+  flex-shrink: 0;
+  transition: box-shadow 0.2s, transform 0.15s;
+}
+
+.nav-avatar:hover {
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.35);
+  transform: translateY(-1px);
+}
+
 .reveal {
   opacity: 0;
   transform: translateY(18px);

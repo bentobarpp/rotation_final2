@@ -154,9 +154,8 @@
         <a href="/home.html">Home</a>
         <a href="/shop.html">Shop</a>
         <a href="/trocas.html" class="selected">Trocas</a>
-        <a href="/social.html">Social</a>
-        <a href="/perfil.html">Perfil</a>
         <a class="logout-btn" href="/index.html">Sair</a>
+        <a href="/perfil.html" class="nav-avatar" id="navAvatar" aria-label="Perfil" title="Perfil">👤</a>
     </div>
 
     <div class="container" id="product-container">
@@ -164,6 +163,7 @@
         <div class="skeleton" style="height:280px;width:100%;margin:0 auto 16px;border-radius:10px;"></div>
     </div>
 
+    <script src="/Js/avatar.js"></script>
     <script>
         function getQueryParam(param) {
             return new URLSearchParams(window.location.search).get(param);

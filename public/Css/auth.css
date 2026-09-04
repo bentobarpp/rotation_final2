@@ -1,5 +1,9 @@
 * { box-sizing: border-box; }
 
+html {
+  background: #1d1e21;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
@@ -13,6 +17,7 @@ body {
   background: radial-gradient(circle at 20% 15%, rgba(108, 110, 254, 0.12), transparent 45%),
               linear-gradient(to bottom, #1d1e21, #26272b 55%, #2c2d32);
   color: #f4f4f4;
+  overscroll-behavior-y: none;
 }
 
 .auth-logo {
