@@ -2,7 +2,19 @@
    Nunca duplique essas regras no <style> de uma página; isso é o que
    causava o menu "pulando" entre páginas (logo, fonte e altura diferentes). */
 
+/* Como o site é multi-página (cada clique recarrega o documento), o
+   navegador troca a página inteira — o que sempre gera um "flash",
+   mesmo com CSS idêntico. A View Transitions API faz o navegador
+   reconhecer que o #nav da página antiga e da nova são "o mesmo
+   elemento" e mantê-lo estático na troca, em vez de recarregar/piscar.
+   Navegadores sem suporte (Firefox) simplesmente ignoram isso e
+   navegam normalmente — sem quebrar nada. */
+@view-transition {
+  navigation: auto;
+}
+
 #nav {
+  view-transition-name: site-nav;
   position: fixed;
   top: 0;
   left: 0;
