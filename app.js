@@ -59,7 +59,10 @@ router.post("/login", async (req, res) => {
     return res.status(400).json({ success: false, message: "Usuário e senha são obrigatórios." });
   }
   try {
-    const { rows } = await pool.query("SELECT * FROM usuarios WHERE nome = $1", [username]);
+    const { rows } = await pool.query(
+      "SELECT * FROM usuarios WHERE lower(nome) = lower($1) OR lower(email) = lower($1)",
+      [username]
+    );
     const user = rows[0];
     if (!user || !(await bcrypt.compare(password, user.senha_hash))) {
       return res.status(401).json({ success: false, message: "Usuário ou senha incorretos." });
