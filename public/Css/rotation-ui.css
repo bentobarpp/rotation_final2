@@ -1,0 +1,74 @@
+/* Sistema visual compartilhado: animações de entrada, skeletons e estado vazio */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: none;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #26272d 25%, #313340 37%, #26272d 63%);
+  background-size: 400% 100%;
+  animation: skeleton-loading 1.4s ease infinite;
+  border-radius: 12px;
+}
+
+@keyframes skeleton-loading {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #8b8fa3;
+}
+
+.empty-state .empty-emoji {
+  font-size: 2.6rem;
+  display: block;
+  margin-bottom: 14px;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.empty-state a {
+  color: #a5a8ff;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.empty-state a:hover {
+  text-decoration: underline;
+}
+
+.section-title {
+  text-align: center;
+  font-size: clamp(1.5rem, 3.4vw, 2.1rem);
+  font-weight: 800;
+  margin: 0 0 8px;
+  color: #fff;
+  letter-spacing: -0.3px;
+}
+
+.section-title .accent {
+  background: linear-gradient(90deg, #a5a8ff, #ec9df0);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.section-sub {
+  text-align: center;
+  color: #9ca0b5;
+  font-size: 0.98rem;
+  margin: 0 0 40px;
+}

@@ -6,6 +6,7 @@
   <title>Finalizar Compra - Rotation</title>
   <meta name="description" content="Finalização de compra com cupons de desconto." />
   <link rel="stylesheet" href="/Css/toast.css" />
+  <link rel="stylesheet" href="/Css/rotation-ui.css" />
   <style>
     body {
       background: linear-gradient(to bottom, #26272B, #38393e 85%);
@@ -15,6 +16,22 @@
       padding: 0;
       min-height: 100vh;
     }
+    .checkout-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 5vw;
+      background: #232426;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    .checkout-bar img { height: 36px; }
+    .checkout-bar a {
+      color: #bbccff;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+    .checkout-bar a:hover { color: #fff; }
     main {
       max-width: 580px;
       margin: 40px auto 40px auto;
@@ -123,9 +140,14 @@
   </style>
 </head>
 <body>
+  <div class="checkout-bar">
+    <a href="/home.html"><img src="/Galery/BannerRotation.png" alt="Rotation"></a>
+    <a href="javascript:history.back()">&larr; Voltar</a>
+  </div>
   <main>
-    <h1>Finalizar Compra</h1>
-    <img id="productImg" alt="Imagem do Tênis" class="product-img" />
+    <h1 class="reveal visible">Finalizar Compra</h1>
+    <div class="skeleton" id="productSkeleton" style="height:200px;width:200px;margin:0 auto 14px;border-radius:14px;"></div>
+    <img id="productImg" alt="Imagem do Tênis" class="product-img" style="display:none;" />
 
     <div id="productName" class="info-main"></div>
     <div id="productPrice" class="price-main"></div>
@@ -211,8 +233,11 @@
           return;
         }
         product = { name: data.produto.nome, price: parseFloat(data.produto.preco), size: data.produto.tamanho || "N/D", image: data.produto.imagemUrl };
-        document.getElementById("productImg").src = product.image || "";
-        document.getElementById("productImg").alt = product.name;
+        document.getElementById("productSkeleton").style.display = "none";
+        const imgEl = document.getElementById("productImg");
+        imgEl.src = product.image || "";
+        imgEl.alt = product.name;
+        imgEl.style.display = "block";
         document.getElementById("productName").textContent = product.name;
         document.getElementById("productPrice").textContent = "Preço: " + formatPrice(product.price);
         document.getElementById("productSize").textContent = "Tamanho: " + product.size;

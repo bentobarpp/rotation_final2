@@ -6,18 +6,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Detalhes do Produto</title>
     <meta name="description" content="Veja detalhes do produto selecionado para troca.">
+    <link rel="stylesheet" href="/Css/rotation-ui.css" />
     <style>
         body {
             background: #26272B;
             color: #f4f4f4;
             font-family: 'Segoe UI', Arial, sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 0 0 20px;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
+
+        #nav {
+            width: 100%;
+            background: #232426;
+            color: #fff;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            padding: 18px 0 14px 0;
+            gap: 15px;
+            font-size: 1.05rem;
+            box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.08);
+            box-sizing: border-box;
+        }
+
+        #nav .logo { height: 40px; margin-right: 12px; vertical-align: middle; }
+
+        #nav a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            margin: 0 7px;
+            border-radius: 5px;
+            padding: 7px 16px;
+            transition: background 0.25s;
+        }
+
+        #nav a:hover, #nav a.selected { background: rgba(108, 110, 254, 0.11); }
 
         .container {
             max-width: 900px;
@@ -119,8 +149,19 @@
 </head>
 
 <body>
+    <div id="nav">
+        <img class="logo" src="/Galery/BannerRotation.png" alt="logo rotation" />
+        <a href="/home.html">Home</a>
+        <a href="/shop.html">Shop</a>
+        <a href="/trocas.html" class="selected">Trocas</a>
+        <a href="/social.html">Social</a>
+        <a href="/perfil.html">Perfil</a>
+        <a class="logout-btn" href="/index.html">Sair</a>
+    </div>
+
     <div class="container" id="product-container">
-        <!-- Content will be populated here by JavaScript -->
+        <div class="skeleton" style="height:38px;width:50%;margin:0 auto 20px;"></div>
+        <div class="skeleton" style="height:280px;width:100%;margin:0 auto 16px;border-radius:10px;"></div>
     </div>
 
     <script>
@@ -132,14 +173,14 @@
             const id = getQueryParam('id');
             const container = document.getElementById('product-container');
             if (!id) {
-                container.innerHTML = '<p>Produto não encontrado.</p>';
+                container.innerHTML = '<div class="empty-state"><span class="empty-emoji">🚫</span><p>Produto não encontrado. <a href="/trocas.html">Voltar para Trocas</a></p></div>';
                 return;
             }
             try {
                 const res = await fetch(`/api/trocas/${encodeURIComponent(id)}`);
                 const data = await res.json();
                 if (!data.success) {
-                    container.innerHTML = '<p>Produto não encontrado.</p>';
+                    container.innerHTML = '<div class="empty-state"><span class="empty-emoji">🚫</span><p>Produto não encontrado. <a href="/trocas.html">Voltar para Trocas</a></p></div>';
                     return;
                 }
                 const product = data.troca;
@@ -163,7 +204,7 @@
                 };
             } catch (err) {
                 console.error(err);
-                container.innerHTML = '<p>Produto não encontrado.</p>';
+                container.innerHTML = '<div class="empty-state"><span class="empty-emoji">🚫</span><p>Produto não encontrado. <a href="/trocas.html">Voltar para Trocas</a></p></div>';
             }
         }
 

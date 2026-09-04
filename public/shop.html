@@ -7,6 +7,7 @@
   <title>Shop - Rotation</title>
   <meta name="description" content="Encontre as melhores ofertas." />
   <link rel="stylesheet" href="/Css/toast.css" />
+  <link rel="stylesheet" href="/Css/rotation-ui.css" />
   <style>
     body {
       background: linear-gradient(to bottom, #26272B, #38393e 85%);
@@ -199,6 +200,11 @@
       text-align: center;
       position: relative;
       transition: box-shadow .24s, transform .18s;
+      animation: card-in .4s ease both;
+    }
+    @keyframes card-in {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: none; }
     }
 
     .produto:hover {
@@ -292,6 +298,18 @@
         max-width: 340px;
       }
     }
+
+    .shop-subtitle {
+      text-align: center;
+      color: #9ca0b5;
+      margin: -10px 0 26px;
+      font-size: 1rem;
+    }
+    .skeleton-card {
+      width: 270px;
+      height: 300px;
+      border-radius: 15px;
+    }
   </style>
 </head>
 
@@ -314,9 +332,14 @@
   </div>
 
   <div class="container">
-    <h1>Encontre os boots mais desejados e exclusivos do momento</h1>
-    <a href="/upload.html" class="buy-btn">Vender um Tênis</a>
-    <div id="productList"></div>
+    <h1 class="reveal">Encontre os boots mais desejados e exclusivos do momento</h1>
+    <p class="shop-subtitle reveal">Peças verificadas, vendidas direto por outros sneakerheads.</p>
+    <a href="/upload.html" class="buy-btn reveal">Vender um Tênis</a>
+    <div id="productList">
+      <div class="skeleton skeleton-card"></div>
+      <div class="skeleton skeleton-card"></div>
+      <div class="skeleton skeleton-card"></div>
+    </div>
   </div>
 
   <footer class="rodape">
@@ -325,6 +348,7 @@
   </footer>
 
   <script src="/Js/toast.js"></script>
+  <script src="/Js/reveal.js"></script>
   <script>
     const usuario = JSON.parse(localStorage.getItem("usuarioLogado"));
 
@@ -340,6 +364,15 @@
         }
       } catch (err) {
         console.error('Erro na requisição:', err);
+      }
+
+      const buscaUrl = new URLSearchParams(window.location.search).get('busca');
+      if (buscaUrl) {
+        document.getElementById('txtBusca').value = buscaUrl;
+        const termo = buscaUrl.trim().toLowerCase();
+        products = products.filter(p => p.nome.toLowerCase().includes(termo));
+        const h1 = document.querySelector('h1');
+        if (h1) h1.textContent = `Resultados para "${buscaUrl}"`;
       }
 
       renderProducts(products);
@@ -371,6 +404,16 @@
     function renderProducts(products) {
       const productList = document.getElementById('productList');
       productList.innerHTML = '';
+
+      if (products.length === 0) {
+        productList.innerHTML = `
+          <div class="empty-state">
+            <span class="empty-emoji">🔎</span>
+            <p>Nenhum tênis à venda no momento. <a href="/upload.html">Anuncie o seu!</a></p>
+          </div>`;
+        configurarBusca(products);
+        return;
+      }
 
       products.forEach((prod) => {
         const isOwner = usuario && prod.usuarioId === usuario.id;

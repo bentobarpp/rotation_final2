@@ -7,6 +7,7 @@
   <title>Trocas - Rotation</title>
   <meta name="description" content="Anuncie tênis para troca, envie e receba propostas ou converse via chat.">
   <link rel="stylesheet" href="/Css/toast.css" />
+  <link rel="stylesheet" href="/Css/rotation-ui.css" />
   <style>
     body {
       background: linear-gradient(to bottom, #26272B, #38393e 85%);
@@ -546,7 +547,8 @@
   </div>
 
   <main>
-    <h1>Coloque seu tênis para troca</h1>
+    <h1 class="reveal">Coloque seu tênis para troca</h1>
+    <p class="section-sub reveal" style="margin-top:-8px;">Anuncie um par que você não usa mais e negocie diretamente com quem topar a troca.</p>
     <form id="sneakerForm" enctype="multipart/form-data">
       <label for="shoeName">Nome do Tênis:</label>
       <input type="text" id="shoeName" required>
@@ -565,7 +567,10 @@
     </div>
 
     <h2>Tenis disponíveis para troca</h2>
-    <section id="sneaker-list"></section>
+    <section id="sneaker-list">
+      <div class="skeleton" style="width:375px;min-height:420px;border-radius:22px;"></div>
+      <div class="skeleton" style="width:375px;min-height:420px;border-radius:22px;"></div>
+    </section>
   </main>
 
   <div id="chatModal" role="dialog" aria-modal="true" aria-labelledby="chatHeader" hidden>
@@ -583,6 +588,8 @@
   </div>
 
   <script src="/Js/toast.js"></script>
+  <script src="/Js/reveal.js"></script>
+  <script src="/Js/nav-search.js"></script>
   <script>
     const form = document.getElementById('sneakerForm'),
       list = document.getElementById('sneaker-list'),
@@ -675,6 +682,14 @@
 
     function renderSneakers() {
       list.innerHTML = '';
+      if (sneakers.length === 0) {
+        list.innerHTML = `
+          <div class="empty-state">
+            <span class="empty-emoji">🔄</span>
+            <p>Nenhuma troca anunciada ainda. Seja o primeiro lá em cima!</p>
+          </div>`;
+        return;
+      }
       sneakers.forEach(createCard);
       observeAllCards();
     }

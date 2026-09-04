@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Rotation</title>
   <meta name="description" content="Na Rotation, somos apaixonados por sneakers. Oferecemos acesso aos sneakers mais cobiçados e raros." />
+  <link rel="stylesheet" href="/Css/rotation-ui.css" />
   <style>
     body {
       background: linear-gradient(to bottom, #26272B, #38393e 85%);
@@ -244,6 +245,78 @@
       .cartao-sobre, .cartao-missao {width: 96vw;}
       .search-result-container {width:99vw;}
     }
+
+    .hero {
+      max-width: 1040px;
+      margin: 48px auto 8px;
+      padding: 0 4vw;
+      text-align: center;
+    }
+    .hero .kicker {
+      font-family: 'Courier New', monospace;
+      color: #a5a8ff;
+      letter-spacing: 0.12em;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 800;
+      line-height: 1.15;
+      margin: 0 0 18px;
+      letter-spacing: -1px;
+    }
+    .hero h1 .accent {
+      background: linear-gradient(90deg, #a5a8ff, #ec9df0);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .hero p {
+      color: #b7bbd1;
+      font-size: 1.05rem;
+      max-width: 560px;
+      margin: 0 auto 30px;
+      line-height: 1.7;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 46px;
+    }
+    .hero-btn {
+      padding: 12px 28px;
+      border-radius: 10px;
+      font-weight: 700;
+      text-decoration: none;
+      font-size: 0.98rem;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .hero-btn.primary {
+      background: linear-gradient(90deg, #6c6efe, #3f42dc);
+      color: #fff;
+    }
+    .hero-btn.primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 26px rgba(108,110,254,0.35);
+    }
+    .hero-btn.ghost {
+      background: rgba(255,255,255,0.06);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.14);
+    }
+    .hero-btn.ghost:hover {
+      background: rgba(255,255,255,0.1);
+    }
+    .carousel-skeleton {
+      display: flex;
+      gap: 26px;
+      padding: 24px;
+    }
+    .carousel-skeleton .skeleton { width: 192px; height: 197px; flex-shrink: 0; }
   </style>
 </head>
 <body>
@@ -252,8 +325,9 @@
   <div class="logo-container">
     <img class="logo" src="/Galery/BannerRotation.png" alt="logo rotation" />
   </div>
-  <a href="/trocas.html">Trocas</a>
+  <a href="/home.html" class="selected">Home</a>
   <a href="/shop.html">Shop</a>
+  <a href="/trocas.html">Trocas</a>
   <a href="/social.html">Social</a>
   <a href="/perfil.html">Perfil</a>
   <input type="text" id="txtBusca" placeholder="Buscar"/>
@@ -265,6 +339,21 @@
   <div id="search-results" class="search-result-list"></div>
 </div>
 
+<section class="hero">
+  <p class="kicker reveal">Sneakers raros, direto da comunidade</p>
+  <h1 class="reveal">Bem-vindo à <span class="accent">Rotation</span></h1>
+  <p class="reveal">
+    Compre, venda e troque os tênis mais cobiçados com quem entende do assunto.
+    Sem intermediário, sem enrolação — só sneakerheads de verdade.
+  </p>
+  <div class="hero-actions reveal">
+    <a href="/shop.html" class="hero-btn primary">Explorar a Shop</a>
+    <a href="/trocas.html" class="hero-btn ghost">Anunciar uma troca</a>
+  </div>
+</section>
+
+<h2 class="section-title reveal">Em <span class="accent">destaque</span></h2>
+
 <div class="carousel-container">
   <div class="carousel-slide" id="carousel-slide" style="--num-items:0;">
     <!-- Itens do carrossel vêm pelo JS -->
@@ -272,7 +361,7 @@
 </div>
 
 <main class="conteudo">
-  <article id="quem-somos" class="cartao-sobre">
+  <article id="quem-somos" class="cartao-sobre reveal">
     <h2>Quem somos?</h2>
     <p>
       Na Rotation, somos apaixonados por sneakers. Mais do que uma loja de calçados,
@@ -280,7 +369,7 @@
       incondicional por tênis exclusivos, de edição limitada e clássicos.
     </p>
   </article>
-  <article id="missao" class="cartao-missao">
+  <article id="missao" class="cartao-missao reveal">
     <h2>Nossa Missão</h2>
     <p>
       Nossa missão é fornecer aos nossos clientes acesso aos sneakers mais cobiçados
@@ -298,12 +387,16 @@
   </p>
 </footer>
 
+<script src="/Js/reveal.js"></script>
+<script src="/Js/nav-search.js"></script>
 <script>
 // ================== DADOS REAIS VINDOS DA API ====================
 const slide = document.getElementById('carousel-slide');
 const txtBusca = document.getElementById('txtBusca');
 const searchResults = document.getElementById('search-results');
 let allShoes = [];
+
+slide.innerHTML = '<div class="carousel-skeleton">' + '<div class="skeleton"></div>'.repeat(4) + '</div>';
 
 async function carregarProdutos() {
   try {
@@ -318,6 +411,15 @@ async function carregarProdutos() {
 }
 
 function renderCarousel() {
+  if (allShoes.length === 0) {
+    slide.innerHTML = '';
+    document.querySelector('.carousel-container').innerHTML = `
+      <div class="empty-state">
+        <span class="empty-emoji">👟</span>
+        <p>Ainda não há tênis cadastrados. <a href="/upload.html">Seja o primeiro a vender!</a></p>
+      </div>`;
+    return;
+  }
   slide.style.setProperty('--num-items', allShoes.length);
   const itemsToRender = [...allShoes, ...allShoes];
   slide.innerHTML = '';

@@ -163,8 +163,10 @@ router.delete("/delete-user/:id", authMiddleware, async (req, res) => {
 router.get("/produtos", async (req, res) => {
   try {
     const { rows } = await pool.query(
-      `SELECT id, nome, preco, imagem_url AS "imagemUrl", tamanho, descricao, usuario_id AS "usuarioId"
-       FROM produtos WHERE vendido = false ORDER BY criado_em DESC`
+      `SELECT p.id, p.nome, p.preco, p.imagem_url AS "imagemUrl", p.tamanho, p.descricao,
+              p.usuario_id AS "usuarioId", u.nome AS "vendedorNome"
+       FROM produtos p LEFT JOIN usuarios u ON u.id = p.usuario_id
+       WHERE p.vendido = false ORDER BY p.criado_em DESC`
     );
     res.json({ success: true, results: rows });
   } catch (err) {
@@ -268,8 +270,10 @@ router.post("/cupons/validar", async (req, res) => {
 router.get("/trocas", async (req, res) => {
   try {
     const { rows } = await pool.query(
-      `SELECT id, nome, descricao, troca_por AS "trocaPor", imagens, usuario_id AS "usuarioId", vendido
-       FROM trocas WHERE vendido = false ORDER BY criado_em DESC`
+      `SELECT t.id, t.nome, t.descricao, t.troca_por AS "trocaPor", t.imagens,
+              t.usuario_id AS "usuarioId", t.vendido, u.nome AS "donoNome"
+       FROM trocas t LEFT JOIN usuarios u ON u.id = t.usuario_id
+       WHERE t.vendido = false ORDER BY t.criado_em DESC`
     );
     res.json({ success: true, results: rows });
   } catch (err) {

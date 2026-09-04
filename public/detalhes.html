@@ -7,6 +7,7 @@
   <title>Detalhes do Tênis - Rotation</title>
   <meta name="description" content="Detalhes do produto" />
   <link rel="stylesheet" href="/Css/shop.css" />
+  <link rel="stylesheet" href="/Css/rotation-ui.css" />
   <style>
     body {
       background: linear-gradient(to bottom, #26272B, #38393e 85%);
@@ -231,14 +232,15 @@
     <a href="/trocas.html">Trocas</a>
     <a href="/social.html">Social</a>
     <a href="/perfil.html">Perfil</a>
-    <a href="/novos-produtos.html">Novos Produtos</a>
     <input type="text" id="txtBusca" placeholder="Buscar" />
     <a class="logout-btn" href="/index.html">Sair</a>
 
   </div>
 
   <div class="container" id="productDetails">
-    <!-- Conteúdo carregado via JS -->
+    <div class="skeleton" style="height:42px;width:60%;margin:0 auto 26px;"></div>
+    <div class="skeleton" style="height:340px;width:340px;margin:0 auto 20px;border-radius:15px;"></div>
+    <div class="skeleton" style="height:20px;width:40%;margin:0 auto;"></div>
   </div>
 
   <footer class="rodape">
@@ -247,6 +249,7 @@
     </p>
   </footer>
 
+  <script src="/Js/nav-search.js"></script>
   <script>
     function getQueryParam(param) {
       const urlSearchParams = new URLSearchParams(window.location.search);
@@ -257,20 +260,22 @@
 
     function displayProduct(product) {
       const container = document.getElementById("productDetails");
+      const hasMultipleImages = product.images.length > 1;
       container.innerHTML = `
-        <h1 class="product-title">${product.name}</h1>
+        <h1 class="product-title reveal visible">${product.name}</h1>
         <div class="image-navigation">
-          <button id="prevImage" type="button" aria-label="Imagem anterior">&laquo; Anterior</button>
+          ${hasMultipleImages ? `<button id="prevImage" type="button" aria-label="Imagem anterior">&laquo; Anterior</button>` : ''}
           <img src="${product.images[0]}" alt="${product.name}" class="images-main" id="mainImage" />
-          <button id="nextImage" type="button" aria-label="Próxima imagem">Próximo &raquo;</button>
+          ${hasMultipleImages ? `<button id="nextImage" type="button" aria-label="Próxima imagem">Próximo &raquo;</button>` : ''}
         </div>
+        ${hasMultipleImages ? `
         <div class="images-secondary" id="secondaryImages">
           ${product.images
             .map(
               (img, idx) => `<img src="${img}" alt="Imagem ${idx + 1}" data-index="${idx}" />`
             )
             .join("")}
-        </div>
+        </div>` : ''}
         <p class="product-price-size">Preço: R$ ${product.price.toFixed(2).replace('.', ',')} | Tamanho: ${product.size}</p>
         <p class="product-info">${product.description}</p>
         <a href="compra.html?id=${encodeURIComponent(productId)}" class="buy-btn" id="btnComprar">Comprar Agora</a>
@@ -282,6 +287,8 @@
       const secondaryImages = document.querySelectorAll("#secondaryImages img");
       const prevBtn = document.getElementById("prevImage");
       const nextBtn = document.getElementById("nextImage");
+
+      if (!hasMultipleImages) return;
 
       function updateMainImage(i) {
         if (i < 0) i = product.images.length - 1;
@@ -307,14 +314,14 @@
 
     async function carregarProduto() {
       if (!productId) {
-        document.getElementById('productDetails').innerHTML = '<p>Produto não encontrado.</p>';
+        document.getElementById('productDetails').innerHTML = '<div class="empty-state"><span class="empty-emoji">🚫</span><p>Produto não encontrado. <a href="/shop.html">Voltar para a Shop</a></p></div>';
         return;
       }
       try {
         const res = await fetch(`/api/produtos/${encodeURIComponent(productId)}`);
         const data = await res.json();
         if (!data.success) {
-          document.getElementById('productDetails').innerHTML = '<p>Produto não encontrado.</p>';
+          document.getElementById('productDetails').innerHTML = '<div class="empty-state"><span class="empty-emoji">🚫</span><p>Produto não encontrado. <a href="/shop.html">Voltar para a Shop</a></p></div>';
           return;
         }
         const p = data.produto;
@@ -327,7 +334,7 @@
         });
       } catch (err) {
         console.error(err);
-        document.getElementById('productDetails').innerHTML = '<p>Produto não encontrado.</p>';
+        document.getElementById('productDetails').innerHTML = '<div class="empty-state"><span class="empty-emoji">🚫</span><p>Produto não encontrado. <a href="/shop.html">Voltar para a Shop</a></p></div>';
       }
     }
 

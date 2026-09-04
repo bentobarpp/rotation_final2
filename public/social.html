@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Social - Rotation</title>
   <meta name="description" content="Conecte-se com outros apaixonados por sneakers na Rotation." />
+  <link rel="stylesheet" href="/Css/rotation-ui.css" />
   <style>
     body {
       background: linear-gradient(to bottom, #26272b, #38393e 85%);
@@ -199,6 +200,33 @@
       background-color: #6c6efe;
       box-shadow: 0 0 14px #6c6efeaa;
     }
+    .feed-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 12px;
+      border-bottom: 1px solid #474961;
+    }
+    .feed-item:last-child { border-bottom: none; }
+    .feed-item img {
+      width: 52px;
+      height: 52px;
+      border-radius: 10px;
+      object-fit: contain;
+      background: #191a1e;
+      flex-shrink: 0;
+    }
+    .feed-item .feed-text { flex: 1; }
+    .feed-item .feed-tag {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #a5a8ff;
+      display: block;
+      margin-bottom: 3px;
+    }
+    .feed-item .feed-tag.troca { color: #f0a5df; }
     footer.rodape {
       background-color: #232426;
       color: white;
@@ -240,8 +268,8 @@
 <div id="nav">
   <img class="logo" src="/Galery/BannerRotation.png" alt="logo rotation">
   <a href="/home.html">Home</a>
-  <a href="/trocas.html">Trocas</a>
   <a href="/shop.html">Shop</a>
+  <a href="/trocas.html">Trocas</a>
   <a href="/social.html" class="selected">Social</a>
   <a href="/perfil.html">Perfil</a>
   <input type="text" id="txtBusca" placeholder="Buscar"/>
@@ -254,26 +282,17 @@
 </div>
 
 <section id="cabecalho">
-  <h1>Comunidade</h1>
-  <p>Encontre pessoas apaixonadas por tênis.</p>
+  <h1 class="reveal">Comunidade</h1>
+  <p class="reveal">O que a galera está anunciando agora.</p>
 </section>
 
 <main class="conteudo">
-  <article id="postagens" class="cartao-sobre">
-    <h2>Últimas Postagens</h2>
-    <ul>
-      <li>
-        <strong>Usuário:</strong> Acabei de trocar meu Jordan, tenho mais 2 modelos para troca! 
-        <button>Ver Detalhes</button>
-      </li>
-      <li>
-        <strong>Usuário:</strong> Qual sneaker entre adi2000 e Campus vocês acham que eu devo comprar?
-        <button>Ver Detalhes</button>
-      </li>
-      <li>
-        <strong>Usuário:</strong> Slg nesse hot step2 que eu peguei na gringa, algm interessado?
-        <button>Ver Detalhes</button>
-      </li>
+  <article id="postagens" class="cartao-sobre reveal">
+    <h2>Atividade recente</h2>
+    <ul id="feedList">
+      <li><div class="skeleton" style="height:52px;border-radius:10px;"></div></li>
+      <li><div class="skeleton" style="height:52px;border-radius:10px;"></div></li>
+      <li><div class="skeleton" style="height:52px;border-radius:10px;"></div></li>
     </ul>
   </article>
 </main>
@@ -285,6 +304,8 @@
   </p>
 </footer>
 
+<script src="/Js/reveal.js"></script>
+<script src="/Js/nav-search.js"></script>
 <script>
 // ================== TENIS REAIS VINDOS DA API ====================
 let allShoes = [];
@@ -298,6 +319,62 @@ async function carregarProdutos() {
   }
 }
 carregarProdutos();
+
+// ================== FEED DE ATIVIDADE REAL ==================
+async function carregarFeed() {
+  const feedList = document.getElementById('feedList');
+  try {
+    const [produtosRes, trocasRes] = await Promise.all([
+      fetch('/api/produtos').then(r => r.json()),
+      fetch('/api/trocas').then(r => r.json()),
+    ]);
+
+    const itens = [
+      ...(produtosRes.results || []).map(p => ({
+        tipo: 'venda',
+        nome: p.vendedorNome || 'Rotation',
+        texto: `anunciou "${p.nome}" à venda por R$ ${Number(p.preco).toFixed(2).replace('.', ',')}`,
+        img: p.imagemUrl,
+        link: `/detalhes.html?id=${p.id}`,
+      })),
+      ...(trocasRes.results || []).map(t => ({
+        tipo: 'troca',
+        nome: t.donoNome || 'Alguém',
+        texto: `quer trocar "${t.nome}" por "${t.trocaPor}"`,
+        img: (t.imagens && t.imagens[0]) || '',
+        link: `/produto.html?id=${t.id}`,
+      })),
+    ].slice(0, 12);
+
+    if (itens.length === 0) {
+      feedList.innerHTML = `
+        <div class="empty-state">
+          <span class="empty-emoji">💬</span>
+          <p>Ninguém anunciou nada ainda. <a href="/upload.html">Comece você!</a></p>
+        </div>`;
+      return;
+    }
+
+    feedList.innerHTML = '';
+    itens.forEach(item => {
+      const li = document.createElement('li');
+      li.className = 'feed-item';
+      li.innerHTML = `
+        <img src="${item.img}" alt="">
+        <div class="feed-text">
+          <span class="feed-tag ${item.tipo}">${item.tipo === 'venda' ? 'Venda' : 'Troca'}</span>
+          <strong>${item.nome}</strong> ${item.texto}
+        </div>
+        <a href="${item.link}"><button type="button">Ver</button></a>
+      `;
+      feedList.appendChild(li);
+    });
+  } catch (err) {
+    console.error('Erro ao carregar feed:', err);
+    feedList.innerHTML = `<div class="empty-state"><p>Não foi possível carregar a atividade recente.</p></div>`;
+  }
+}
+carregarFeed();
 
 const txtBusca = document.getElementById('txtBusca');
 const searchResults = document.getElementById('search-results');

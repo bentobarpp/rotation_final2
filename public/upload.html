@@ -135,6 +135,18 @@
             background: linear-gradient(90deg, #292929 0%, #434343 100%);
             transform: translateY(-2px) scale(1.03);
         }
+        .upload-img-preview {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+        .upload-img-preview img {
+            max-width: 160px;
+            max-height: 160px;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.35);
+        }
         @media (max-width: 600px) {
             .upload-container {
                 max-width: 95vw;
@@ -152,7 +164,6 @@
     <a href="/trocas.html">Trocas</a>
     <a href="/social.html">Social</a>
     <a href="/perfil.html">Perfil</a>
-    <a href="/novos-produtos.html">Novos Produtos</a>
     <input type="text" id="txtBusca" placeholder="Buscar" />
     <a class="logout-btn" href="/index.html">Sair</a>
 
@@ -184,13 +195,9 @@
         <label for="shoeDescription">Descrição</label>
         <textarea id="shoeDescription" maxlength="400" placeholder="Descreva o produto, estado de uso, detalhes, etc." required></textarea>
 
-        <label for="shoeMainImage">URL da Imagem Principal</label>
-        <input type="text" id="shoeMainImage" placeholder="Ex: https://seusite.com/imagem1.jpg" required />
-
-        <label for="shoeImagesAdditional">URL das Imagens Secundárias
-            <span class="info">(opcional, até 3 URLs separadas por vírgula)</span>
-        </label>
-        <input type="text" id="shoeImagesAdditional" placeholder="Ex: https://seusite.com/img2.jpg, https://seusite.com/img3.jpg" />
+        <label for="shoeMainImage">Foto do Tênis</label>
+        <input type="file" id="shoeMainImage" accept="image/*" required />
+        <div id="imgPreview" class="upload-img-preview"></div>
 
         <button type="submit" class="buy-btn">Adicionar Tênis</button>
     </form>
@@ -204,26 +211,39 @@
 </footer>
 
 <script src="/Js/toast.js"></script>
+<script src="/Js/nav-search.js"></script>
 <script>
+const shoeMainImageInput = document.getElementById("shoeMainImage");
+const imgPreview = document.getElementById("imgPreview");
+
+shoeMainImageInput.addEventListener("change", function () {
+    imgPreview.innerHTML = "";
+    const file = this.files[0];
+    if (!file || !file.type.startsWith("image/")) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const img = document.createElement("img");
+        img.src = e.target.result;
+        imgPreview.appendChild(img);
+    };
+    reader.readAsDataURL(file);
+});
+
 document.getElementById("uploadForm").addEventListener("submit", function (event) {
     event.preventDefault();
 
-    // Get values from form fields
+    const submitBtn = event.target.querySelector('button[type="submit"]');
     var shoeName = document.getElementById("shoeName").value.trim();
-    // Using step="0.01" for price input for better precision
-    var shoePrice = parseFloat(document.getElementById("shoePrice").value.trim()) || 0; 
+    var shoePrice = parseFloat(document.getElementById("shoePrice").value.trim()) || 0;
     var shoeSize = document.getElementById("shoeSize").value;
     var shoeDescription = document.getElementById("shoeDescription").value.trim();
-    var shoeMainImage = document.getElementById("shoeMainImage").value.trim();
-    var shoeImagesAdditional = document.getElementById("shoeImagesAdditional").value.trim();
+    var shoeImageFile = shoeMainImageInput.files[0];
 
-    // Basic validation
-    if (!shoeName || !shoePrice || !shoeSize || !shoeDescription || !shoeMainImage) {
-        toast("Preencha todos os campos obrigatórios (Nome, Preço, Tamanho, Descrição, Imagem Principal).", "error");
+    if (!shoeName || !shoePrice || !shoeSize || !shoeDescription || !shoeImageFile) {
+        toast("Preencha todos os campos obrigatórios, incluindo a foto.", "error");
         return;
     }
 
-    // Check for logged-in user
     const usuarioString = localStorage.getItem("usuarioLogado");
     if (!usuarioString) {
         toast("Você precisa estar logado para vender um tênis. Redirecionando...", "error");
@@ -237,54 +257,50 @@ document.getElementById("uploadForm").addEventListener("submit", function (event
         setTimeout(() => window.location.href = '/index.html', 1200);
         return;
     }
-    
-    // Prepare additional images (if any)
-    let additionalImagesArray = [];
-    if (shoeImagesAdditional) {
-        additionalImagesArray = shoeImagesAdditional.split(',').map(url => url.trim()).filter(url => url !== '');
-    }
 
-    // Construct the data object for the server
-    const shoeData = {
-        nome: shoeName,
-        marca: shoeName.split(" ")[0], // Uses the first word of the name as the brand
-        preco: shoePrice,
-        tamanho: shoeSize,
-        descricao: shoeDescription,
-        imagemUrl: shoeMainImage,
-        imagensAdicionais: additionalImagesArray, // New field for additional images
-        usuario_id: usuario.id
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Enviando...";
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const shoeData = {
+            nome: shoeName,
+            preco: shoePrice,
+            tamanho: shoeSize,
+            descricao: shoeDescription,
+            imagemUrl: e.target.result,
+        };
+
+        const token = localStorage.getItem("token");
+
+        fetch('/api/produtos', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify(shoeData)
+        })
+        .then(response => {
+            if (response.ok) {
+                toast('Tênis adicionado com sucesso!', 'success');
+                document.getElementById("uploadForm").reset();
+                imgPreview.innerHTML = "";
+                setTimeout(() => window.location.href = '/shop.html', 900);
+            } else {
+                return response.json().then(err => {
+                    throw new Error(err.message || 'Erro desconhecido ao enviar o tênis.');
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao enviar o tênis:', error);
+            toast('Erro ao enviar o tênis: ' + error.message, 'error');
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Adicionar Tênis";
+        });
     };
-
-    console.log("Dados do tênis a serem enviados:", shoeData);
-
-    const token = localStorage.getItem("token");
-
-    // Send data to the server
-    fetch('/api/produtos', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify(shoeData)
-    })
-    .then(response => {
-        if (response.ok) {
-            toast('Tênis adicionado com sucesso!', 'success');
-            document.getElementById("uploadForm").reset();
-            setTimeout(() => window.location.href = '/shop.html', 900);
-        } else {
-            // If response is not OK, try to parse the error message from the server
-            return response.json().then(err => {
-                throw new Error(err.message || 'Erro desconhecido ao enviar o tênis.');
-            });
-        }
-    })
-    .catch(error => {
-        console.error('Erro ao enviar o tênis:', error);
-        toast('Erro ao enviar o tênis: ' + error.message, 'error');
-    });
+    reader.readAsDataURL(shoeImageFile);
 });
 </script>
 
