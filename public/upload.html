@@ -196,7 +196,7 @@
         <textarea id="shoeDescription" maxlength="400" placeholder="Descreva o produto, estado de uso, detalhes, etc." required></textarea>
 
         <label for="shoeMainImage">Foto do Tênis</label>
-        <input type="file" id="shoeMainImage" accept="image/*" required />
+        <input type="file" id="shoeMainImage" accept="image/png,image/jpeg,image/webp,image/gif" required />
         <div id="imgPreview" class="upload-img-preview"></div>
 
         <button type="submit" class="buy-btn">Adicionar Tênis</button>
@@ -211,20 +211,36 @@
 </footer>
 
 <script src="/Js/toast.js"></script>
+<script src="/Js/image-check.js"></script>
 <script src="/Js/nav-search.js"></script>
 <script src="/Js/avatar.js"></script>
 <script>
 const shoeMainImageInput = document.getElementById("shoeMainImage");
 const imgPreview = document.getElementById("imgPreview");
+let shoeImageBase64 = null;
 
 shoeMainImageInput.addEventListener("change", function () {
     imgPreview.innerHTML = "";
+    shoeImageBase64 = null;
     const file = this.files[0];
-    if (!file || !file.type.startsWith("image/")) return;
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+        toast("Esse arquivo não é uma imagem compatível. Envie uma foto em JPG, PNG ou WEBP.", "error");
+        this.value = "";
+        return;
+    }
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
+        const dataUrl = e.target.result;
+        const ok = await testarImagem(dataUrl);
+        if (!ok) {
+            toast("Não foi possível ler essa imagem (formatos RAW como .DNG não são suportados). Envie uma foto em JPG, PNG ou WEBP.", "error");
+            shoeMainImageInput.value = "";
+            return;
+        }
+        shoeImageBase64 = dataUrl;
         const img = document.createElement("img");
-        img.src = e.target.result;
+        img.src = dataUrl;
         imgPreview.appendChild(img);
     };
     reader.readAsDataURL(file);
@@ -238,10 +254,9 @@ document.getElementById("uploadForm").addEventListener("submit", function (event
     var shoePrice = parseFloat(document.getElementById("shoePrice").value.trim()) || 0;
     var shoeSize = document.getElementById("shoeSize").value;
     var shoeDescription = document.getElementById("shoeDescription").value.trim();
-    var shoeImageFile = shoeMainImageInput.files[0];
 
-    if (!shoeName || !shoePrice || !shoeSize || !shoeDescription || !shoeImageFile) {
-        toast("Preencha todos os campos obrigatórios, incluindo a foto.", "error");
+    if (!shoeName || !shoePrice || !shoeSize || !shoeDescription || !shoeImageBase64) {
+        toast("Preencha todos os campos obrigatórios, incluindo uma foto válida.", "error");
         return;
     }
 
@@ -262,46 +277,43 @@ document.getElementById("uploadForm").addEventListener("submit", function (event
     submitBtn.disabled = true;
     submitBtn.textContent = "Enviando...";
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        const shoeData = {
-            nome: shoeName,
-            preco: shoePrice,
-            tamanho: shoeSize,
-            descricao: shoeDescription,
-            imagemUrl: e.target.result,
-        };
-
-        const token = localStorage.getItem("token");
-
-        fetch('/api/produtos', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`,
-            },
-            body: JSON.stringify(shoeData)
-        })
-        .then(response => {
-            if (response.ok) {
-                toast('Tênis adicionado com sucesso!', 'success');
-                document.getElementById("uploadForm").reset();
-                imgPreview.innerHTML = "";
-                setTimeout(() => window.location.href = '/shop.html', 900);
-            } else {
-                return response.json().then(err => {
-                    throw new Error(err.message || 'Erro desconhecido ao enviar o tênis.');
-                });
-            }
-        })
-        .catch(error => {
-            console.error('Erro ao enviar o tênis:', error);
-            toast('Erro ao enviar o tênis: ' + error.message, 'error');
-            submitBtn.disabled = false;
-            submitBtn.textContent = "Adicionar Tênis";
-        });
+    const shoeData = {
+        nome: shoeName,
+        preco: shoePrice,
+        tamanho: shoeSize,
+        descricao: shoeDescription,
+        imagemUrl: shoeImageBase64,
     };
-    reader.readAsDataURL(shoeImageFile);
+
+    const token = localStorage.getItem("token");
+
+    fetch('/api/produtos', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(shoeData)
+    })
+    .then(response => {
+        if (response.ok) {
+            toast('Tênis adicionado com sucesso!', 'success');
+            document.getElementById("uploadForm").reset();
+            imgPreview.innerHTML = "";
+            shoeImageBase64 = null;
+            setTimeout(() => window.location.href = '/shop.html', 900);
+        } else {
+            return response.json().then(err => {
+                throw new Error(err.message || 'Erro desconhecido ao enviar o tênis.');
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Erro ao enviar o tênis:', error);
+        toast('Erro ao enviar o tênis: ' + error.message, 'error');
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Adicionar Tênis";
+    });
 });
 </script>
 

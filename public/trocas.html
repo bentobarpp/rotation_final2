@@ -554,7 +554,7 @@
       <label for="shoeDesc">Descrição:</label>
       <textarea id="shoeDesc" rows="3"></textarea>
       <label for="shoeImgs">Upload até 3 imagens:</label>
-      <input id="shoeImgs" type="file" accept="image/*" multiple required>
+      <input id="shoeImgs" type="file" accept="image/png,image/jpeg,image/webp,image/gif" multiple required>
       <div class="img-preview" id="imgPreview"></div>
       <label for="shoeRequest">Tênis que deseja receber em troca:</label>
       <input type="text" id="shoeRequest" required>
@@ -587,6 +587,7 @@
   </div>
 
   <script src="/Js/toast.js"></script>
+  <script src="/Js/image-check.js"></script>
   <script src="/Js/reveal.js"></script>
   <script src="/Js/nav-search.js"></script>
 <script src="/Js/avatar.js"></script>
@@ -611,36 +612,39 @@
       return res.json();
     }
 
-    imgInput.addEventListener('change', function () {
+    function lerImagemValida(file) {
+      return new Promise(resolve => {
+        if (!file.type.startsWith('image/')) return resolve(null);
+        const reader = new FileReader();
+        reader.onload = async e => {
+          const dataUrl = e.target.result;
+          const ok = await testarImagem(dataUrl);
+          resolve(ok ? dataUrl : null);
+        };
+        reader.onerror = () => resolve(null);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    imgInput.addEventListener('change', async function () {
       imgPreview.innerHTML = '';
       const files = Array.from(this.files).slice(0, 3);
-      files.forEach(file => {
-        if (!file.type.startsWith('image/')) return;
-        const reader = new FileReader();
-        reader.onload = e => {
-          const imgEl = document.createElement('img');
-          imgEl.src = e.target.result;
-          imgPreview.appendChild(imgEl);
-        };
-        reader.readAsDataURL(file);
+      const resultados = await Promise.all(files.map(lerImagemValida));
+      const invalidas = resultados.filter(r => r === null).length;
+      if (invalidas > 0) {
+        toast(`${invalidas} arquivo(s) não é/são imagens compatíveis (formatos RAW como .DNG não são suportados). Envie JPG, PNG ou WEBP.`, 'error');
+      }
+      resultados.filter(Boolean).forEach(dataUrl => {
+        const imgEl = document.createElement('img');
+        imgEl.src = dataUrl;
+        imgPreview.appendChild(imgEl);
       });
     });
 
-    function getBase64Images(files, cb) {
-      let results = [];
+    async function getBase64Images(files, cb) {
       const valid = Array.from(files).slice(0, 3);
-      if (valid.length === 0) return cb([]);
-      let loaded = 0;
-      valid.forEach((file, idx) => {
-        if (!file.type.startsWith('image/')) return;
-        const reader = new FileReader();
-        reader.onload = e => {
-          results[idx] = e.target.result;
-          loaded++;
-          if (loaded === valid.length) cb(results.filter(Boolean));
-        };
-        reader.readAsDataURL(file);
-      });
+      const resultados = await Promise.all(valid.map(lerImagemValida));
+      cb(resultados.filter(Boolean));
     }
 
     function createCard(sneaker) {
@@ -711,6 +715,10 @@
       }
 
       getBase64Images(files, async imagens => {
+        if (imagens.length === 0) {
+          toast("Nenhuma das imagens enviadas é compatível (formatos RAW como .DNG não são suportados). Envie JPG, PNG ou WEBP.", "error");
+          return;
+        }
         try {
           const data = await apiFetch('/api/trocas', {
             method: 'POST',

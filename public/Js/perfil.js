@@ -43,11 +43,24 @@ document.addEventListener("DOMContentLoaded", () => {
     .catch(() => {});
 
   document.getElementById("fotoPerfil").addEventListener("change", function () {
-    const file = this.files[0];
-    if (!file || !file.type.startsWith("image/")) return;
+    const input = this;
+    const file = input.files[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast("Esse arquivo não é uma imagem compatível. Envie uma foto em JPG, PNG ou WEBP.", "error");
+      input.value = "";
+      return;
+    }
     const reader = new FileReader();
-    reader.onload = (e) => {
-      novaFotoBase64 = e.target.result;
+    reader.onload = async (e) => {
+      const dataUrl = e.target.result;
+      const ok = await testarImagem(dataUrl);
+      if (!ok) {
+        toast("Não foi possível ler essa imagem (formatos RAW como .DNG não são suportados). Envie uma foto em JPG, PNG ou WEBP.", "error");
+        input.value = "";
+        return;
+      }
+      novaFotoBase64 = dataUrl;
       mostrarAvatar(novaFotoBase64, null);
     };
     reader.readAsDataURL(file);
