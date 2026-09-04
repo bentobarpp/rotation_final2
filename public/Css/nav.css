@@ -1,0 +1,59 @@
+/* Menu compartilhado por todas as páginas — fonte única de verdade.
+   Nunca duplique essas regras no <style> de uma página; isso é o que
+   causava o menu "pulando" entre páginas (logo, fonte e altura diferentes). */
+
+#nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #232426;
+  color: #fff;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  padding: 18px 0 14px 0;
+  gap: 15px;
+  font-size: 1.05rem;
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+  z-index: 1000;
+}
+
+#nav .logo {
+  height: 40px;
+  margin-right: 12px;
+  vertical-align: middle;
+}
+
+#nav a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  margin: 0 7px;
+  border-radius: 8px;
+  padding: 7px 18px;
+  transition: background 0.2s;
+}
+
+#nav a:hover,
+#nav a.selected {
+  background: rgba(108, 110, 254, 0.11);
+}
+
+#nav input[type="text"] {
+  padding: 7px 12px;
+  border-radius: 8px;
+  border: none;
+  background-color: #33353a;
+  color: #fff;
+  font-size: 1rem;
+  max-width: 210px;
+}
+
+@media (max-width: 500px) {
+  #nav {
+    font-size: 0.97rem;
+  }
+}

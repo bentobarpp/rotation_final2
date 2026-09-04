@@ -7,6 +7,7 @@
     <title>Detalhes do Produto</title>
     <meta name="description" content="Veja detalhes do produto selecionado para troca.">
     <link rel="stylesheet" href="/Css/rotation-ui.css" />
+    <link rel="stylesheet" href="/Css/nav.css" />
     <style>
         body {
             background: #26272B;
@@ -19,39 +20,6 @@
             flex-direction: column;
             align-items: center;
         }
-
-        #nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background: #232426;
-            color: #fff;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-            padding: 18px 0 14px 0;
-            gap: 15px;
-            font-size: 1.05rem;
-            box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.08);
-            box-sizing: border-box;
-            z-index: 1000;
-        }
-
-        #nav .logo { height: 40px; margin-right: 12px; vertical-align: middle; }
-
-        #nav a {
-            color: #fff;
-            text-decoration: none;
-            font-weight: 500;
-            margin: 0 7px;
-            border-radius: 5px;
-            padding: 7px 16px;
-            transition: background 0.25s;
-        }
-
-        #nav a:hover, #nav a.selected { background: rgba(108, 110, 254, 0.11); }
 
         .container {
             max-width: 900px;
@@ -158,6 +126,7 @@
         <a href="/home.html">Home</a>
         <a href="/shop.html">Shop</a>
         <a href="/trocas.html" class="selected">Trocas</a>
+        <input type="text" id="txtBusca" placeholder="Buscar" />
         <a class="logout-btn" href="/index.html">Sair</a>
         <a href="/perfil.html" class="nav-avatar" id="navAvatar" aria-label="Perfil" title="Perfil">👤</a>
     </div>
@@ -168,6 +137,7 @@
     </div>
 
     <script src="/Js/avatar.js"></script>
+    <script src="/Js/nav-search.js"></script>
     <script>
         function getQueryParam(param) {
             return new URLSearchParams(window.location.search).get(param);

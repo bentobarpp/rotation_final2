@@ -6,6 +6,7 @@
   <title>Rotation</title>
   <meta name="description" content="Na Rotation, somos apaixonados por sneakers. Oferecemos acesso aos sneakers mais cobiçados e raros." />
   <link rel="stylesheet" href="/Css/rotation-ui.css" />
+  <link rel="stylesheet" href="/Css/nav.css" />
   <style>
     body {
       background: linear-gradient(to bottom, #26272B, #38393e 85%);
@@ -14,58 +15,6 @@
       margin: 0;
       padding-top: 80px;
     }
-    #nav {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      background: #232426;
-      color: #fff;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: center;
-      padding: 18px 0 14px 0;
-      gap: 15px;
-      font-size: 1.05rem;
-      box-shadow: 0 4px 12px 0 rgba(0,0,0,0.10);
-      box-sizing: border-box;
-      z-index: 1000;
-    }
-    #nav .logo-container {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 16px;
-    }
-    #nav .logo {
-      height: 43px;
-      margin-right: 4px;
-    }
-    #nav a {
-      color: #fff;
-      text-decoration: none;
-      font-weight: 500;
-      margin: 0 7px;
-      border-radius: 8px;
-      padding: 7px 18px;
-      transition: background 0.20s;
-    }
-    #nav a:hover,
-    #nav a.selected {
-      background: rgba(108,110,254,0.11);
-    }
-    #nav input[type="text"] {
-      padding: 7px 12px;
-      border-radius: 8px;
-      border: none;
-      background-color: #33353a;
-      color: #fff;
-      margin-left: 16px;
-      font-size: 1rem;
-      max-width: 210px;
-    }
-
     .search-result-container {
       max-width: 1040px;
       margin: 0 auto 15px auto;
@@ -246,7 +195,6 @@
       .cartao-sobre, .cartao-missao { width: 98vw; max-width: 430px;}
     }
     @media (max-width:500px) {
-      #nav { font-size:.97rem;}
       .conteudo {gap: 8px;}
       .cartao-sobre, .cartao-missao {width: 96vw;}
       .search-result-container {width:99vw;}
@@ -328,9 +276,7 @@
 <body>
 
 <div id="nav">
-  <div class="logo-container">
-    <img class="logo" src="/Galery/BannerRotation.png" alt="logo rotation" />
-  </div>
+  <img class="logo" src="/Galery/BannerRotation.png" alt="logo rotation">
   <a href="/home.html" class="selected">Home</a>
   <a href="/shop.html">Shop</a>
   <a href="/trocas.html">Trocas</a>

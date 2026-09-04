@@ -22,27 +22,6 @@ a:hover {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-#nav {
-    background-color: rgba(38, 38, 38);
-    color: white;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 10px 0;
-}
-
-#nav a {
-    color: white;
-    margin: 0 15px;
-}
-
-#nav input[type="text"] {
-    padding: 5px;
-    border-radius: 5px;
-    border: none;
-    width: 200px;
-}
-
 .logo {
     height: 50px;
 }
