@@ -80,6 +80,20 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.get("/me", authMiddleware, async (req, res) => {
+  try {
+    const { rows } = await pool.query(
+      "SELECT id, nome, email FROM usuarios WHERE id = $1",
+      [req.usuario.usuario_id]
+    );
+    if (rows.length === 0) return res.status(404).json({ success: false, message: "Usuário não encontrado." });
+    res.json({ success: true, user: rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Erro ao buscar usuário." });
+  }
+});
+
 router.put("/update-user", authMiddleware, async (req, res) => {
   const { nome, email, senha } = req.body;
   if (req.usuario.usuario_id !== Number(req.body.id)) {

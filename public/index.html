@@ -4,38 +4,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página de Login</title>
-    <link rel="stylesheet" href="/Css/login.css">
+    <title>Login - Rotation</title>
+    <meta name="description" content="Entre na sua conta Rotation.">
+    <link rel="stylesheet" href="/Css/auth.css">
 </head>
 
 <body>
 
-    <div class="banner"></div>
+    <img class="auth-logo" src="/Galery/BannerRotation.png" alt="Logo Rotation">
 
-    <div class="logo">
-        <img src="/Galery/BannerRotation.png" alt="Logo Rotation" class="logo">
-    </div>
+    <div class="auth-card">
+        <form id="loginForm">
+            <h2>Entrar</h2>
 
-    <div class="login-container">
-        <form id="loginForm" class="login-form">
-            <h2>Login</h2>
-
-            <div class="input-field">
-                <label for="username">Usuário</label>
+            <div class="auth-field">
+                <label for="username">Usuário ou e-mail</label>
                 <input type="text" id="username" placeholder="Digite seu usuário" required>
             </div>
 
-            <div class="input-field">
+            <div class="auth-field">
                 <label for="password">Senha</label>
                 <input type="password" id="password" placeholder="Digite sua senha" required>
             </div>
 
-            <button type="submit" class="botão-entrar">Entrar</button>
+            <button type="submit" class="auth-submit" id="loginBtn">Entrar</button>
 
-            <p class="error-message" id="errorMessage"></p>
+            <p class="auth-message error" id="errorMessage"></p>
 
-            <p class="sign-in">
-                Não possui uma conta? Que vacilo... <a href="/sign-in.html">Sign-in</a>
+            <p class="auth-switch">
+                Ainda não tem uma conta? <a href="/sign-in.html">Criar conta</a>
             </p>
         </form>
     </div>
@@ -43,10 +40,17 @@
     <script src="/Js/login.js"></script>
 
     <script>
-        // Limpa dados do localStorage ao carregar a página
         document.addEventListener("DOMContentLoaded", () => {
             localStorage.removeItem("usuarioLogado");
             localStorage.removeItem("token");
+
+            const params = new URLSearchParams(window.location.search);
+            if (params.get("cadastro") === "sucesso") {
+                const msg = document.getElementById("errorMessage");
+                msg.classList.remove("error");
+                msg.classList.add("success");
+                msg.textContent = "Conta criada com sucesso! Faça login para continuar.";
+            }
         });
     </script>
 </body>

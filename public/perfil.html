@@ -239,16 +239,6 @@
             }
         }
     </style>
-    <script>
-        function excluirConta() {
-            if (confirm('Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita.')) {
-                // Aqui você pode adicionar uma chamada para seu backend via fetch/AJAX
-                alert('Usuário excluído');
-                // Redirecionamento ou logout podem ser feitos aqui
-                // window.location.href = "/logout.html";
-            }
-        }
-    </script>
 </head>
 
 <body>
@@ -288,7 +278,6 @@
 
                 <button type="submit">Salvar Alterações</button>
             </form>
-            <button class="btn-excluir" onclick="excluirConta()">Excluir Conta</button>
         </article>
 
         <article id="market" class="cartao-market">
@@ -305,6 +294,7 @@
         <p class="rodape-texto">Encontrou algum problema? Entre em contato através do e-mail <a
                 href="mailto:rotationsup@gmail.com.br">rotationsup@gmail.com.br</a></p>
     </footer>
+    <script src="/Js/perfil.js"></script>
 </body>
 
 </html>

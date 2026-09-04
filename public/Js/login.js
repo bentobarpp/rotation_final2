@@ -3,6 +3,14 @@ function validateForm(event) {
 
   const username = document.getElementById("username").value.trim();
   const password = document.getElementById("password").value.trim();
+  const btn = document.getElementById("loginBtn");
+  const errorEl = document.getElementById("errorMessage");
+
+  errorEl.classList.remove("success");
+  errorEl.classList.add("error");
+  errorEl.textContent = "";
+  btn.disabled = true;
+  btn.textContent = "Entrando...";
 
   fetch("/api/login", {
     method: "POST",
@@ -22,13 +30,15 @@ function validateForm(event) {
         );
         window.location.href = "/home.html";
       } else {
-        document.getElementById("errorMessage").textContent =
-          data.message || "Usuário ou senha inválidos.";
+        errorEl.textContent = data.message || "Usuário ou senha inválidos.";
+        btn.disabled = false;
+        btn.textContent = "Entrar";
       }
     })
     .catch(() => {
-      document.getElementById("errorMessage").textContent =
-        "Erro ao conectar com o servidor.";
+      errorEl.textContent = "Erro ao conectar com o servidor.";
+      btn.disabled = false;
+      btn.textContent = "Entrar";
     });
 }
 

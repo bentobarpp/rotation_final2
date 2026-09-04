@@ -2,26 +2,44 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Cadastro</title>
-  <link rel="stylesheet" href="/Css/perfil.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Criar Conta - Rotation</title>
+  <meta name="description" content="Crie sua conta na Rotation.">
+  <link rel="stylesheet" href="/Css/auth.css">
 </head>
 <body>
-  <form id="signInForm">
-    <h2>Cadastro</h2>
 
-    <label>Nome:</label>
-    <input type="text" id="nome" required>
+  <img class="auth-logo" src="/Galery/BannerRotation.png" alt="Logo Rotation">
 
-    <label>Email:</label>
-    <input type="email" id="email" required>
+  <div class="auth-card">
+    <form id="signInForm">
+      <h2>Criar conta</h2>
 
-    <label>Senha:</label>
-    <input type="password" id="senha" required>
-    
-    <button type="submit">Cadastrar</button>
-    <p id="msg"></p>
-  </form>
+      <div class="auth-field">
+        <label for="nome">Nome</label>
+        <input type="text" id="nome" placeholder="Como podemos te chamar?" required>
+      </div>
 
-  <script src="/Js/sign-in.js"></script>  
+      <div class="auth-field">
+        <label for="email">E-mail</label>
+        <input type="email" id="email" placeholder="voce@email.com" required>
+      </div>
+
+      <div class="auth-field">
+        <label for="senha">Senha</label>
+        <input type="password" id="senha" placeholder="Mínimo de 6 caracteres" minlength="6" required>
+      </div>
+
+      <button type="submit" class="auth-submit" id="signInBtn">Cadastrar</button>
+
+      <p class="auth-message" id="msg"></p>
+
+      <p class="auth-switch">
+        Já tem uma conta? <a href="/index.html">Entrar</a>
+      </p>
+    </form>
+  </div>
+
+  <script src="/Js/sign-in.js"></script>
 </body>
 </html>

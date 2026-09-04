@@ -9,6 +9,18 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("nome").value = user.nome || "";
   document.getElementById("email").value = user.email || "";
 
+  fetch("/api/me", {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.success) {
+        document.getElementById("nome").value = data.user.nome || "";
+        document.getElementById("email").value = data.user.email || "";
+      }
+    })
+    .catch(() => {});
+
   document.querySelector("form").addEventListener("submit", function (e) {
     e.preventDefault();
 
@@ -47,9 +59,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Botão de deletar conta
   const deleteBtn = document.createElement("button");
-  deleteBtn.textContent = "DELETAR CONTA";
+  deleteBtn.textContent = "Excluir Conta";
   deleteBtn.type = "button";
-  deleteBtn.style.marginTop = "15px";
+  deleteBtn.className = "btn-excluir";
   document.querySelector("form").appendChild(deleteBtn);
 
   deleteBtn.addEventListener("click", () => {
