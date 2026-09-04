@@ -1,3 +1,9 @@
+function validarSenha(senha) {
+  if (senha.length < 6) return "A senha precisa ter no mínimo 6 caracteres.";
+  if (!/[^A-Za-z0-9]/.test(senha)) return "A senha precisa ter pelo menos um caractere especial (ex: ! @ # $ % *).";
+  return null;
+}
+
 document.getElementById("signInForm").addEventListener("submit", function (e) {
   e.preventDefault();
 
@@ -9,6 +15,14 @@ document.getElementById("signInForm").addEventListener("submit", function (e) {
 
   msg.classList.remove("success", "error");
   msg.textContent = "";
+
+  const erroSenha = validarSenha(senha);
+  if (erroSenha) {
+    msg.classList.add("error");
+    msg.textContent = erroSenha;
+    return;
+  }
+
   btn.disabled = true;
   btn.textContent = "Criando conta...";
 

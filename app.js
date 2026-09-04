@@ -58,12 +58,23 @@ function authMiddleware(req, res, next) {
 
 const router = express.Router();
 
+const SPECIAL_CHAR_REGEX = /[^A-Za-z0-9]/;
+function senhaInvalida(senha) {
+  if (!senha || senha.length < 6) return "A senha precisa ter no mínimo 6 caracteres.";
+  if (!SPECIAL_CHAR_REGEX.test(senha)) return "A senha precisa ter pelo menos um caractere especial (ex: ! @ # $ % *).";
+  return null;
+}
+
 // ---------- AUTENTICAÇÃO ----------
 
 router.post("/sign-in", authLimiter, async (req, res) => {
   const { nome, email, senha } = req.body;
   if (!nome || !senha) {
     return res.status(400).json({ success: false, message: "Nome e senha são obrigatórios." });
+  }
+  const erroSenha = senhaInvalida(senha);
+  if (erroSenha) {
+    return res.status(400).json({ success: false, message: erroSenha });
   }
   try {
     const senha_hash = await bcrypt.hash(senha, 10);
@@ -100,7 +111,7 @@ router.post("/login", authLimiter, async (req, res) => {
       success: true,
       message: "Login OK",
       token,
-      user: { id: user.id, nome: user.nome, email: user.email },
+      user: { id: user.id, nome: user.nome, email: user.email, foto: user.foto_url },
     });
   } catch (err) {
     console.error(err);
@@ -111,7 +122,7 @@ router.post("/login", authLimiter, async (req, res) => {
 router.get("/me", authMiddleware, async (req, res) => {
   try {
     const { rows } = await pool.query(
-      "SELECT id, nome, email FROM usuarios WHERE id = $1",
+      "SELECT id, nome, email, foto_url AS foto FROM usuarios WHERE id = $1",
       [req.usuario.usuario_id]
     );
     if (rows.length === 0) return res.status(404).json({ success: false, message: "Usuário não encontrado." });
@@ -123,22 +134,31 @@ router.get("/me", authMiddleware, async (req, res) => {
 });
 
 router.put("/update-user", authMiddleware, async (req, res) => {
-  const { nome, email, senha } = req.body;
+  const { nome, email, senha, foto } = req.body;
   if (req.usuario.usuario_id !== Number(req.body.id)) {
     return res.status(403).json({ success: false, message: "Não autorizado." });
   }
+  if (senha) {
+    const erroSenha = senhaInvalida(senha);
+    if (erroSenha) {
+      return res.status(400).json({ success: false, message: erroSenha });
+    }
+  }
   try {
+    const { rows } = await pool.query("SELECT foto_url FROM usuarios WHERE id=$1", [req.usuario.usuario_id]);
+    const fotoFinal = foto !== undefined ? foto : rows[0]?.foto_url;
+
     if (senha) {
       const senha_hash = await bcrypt.hash(senha, 10);
-      await pool.query("UPDATE usuarios SET nome=$1, email=$2, senha_hash=$3 WHERE id=$4", [
-        nome, email, senha_hash, req.usuario.usuario_id,
+      await pool.query("UPDATE usuarios SET nome=$1, email=$2, senha_hash=$3, foto_url=$4 WHERE id=$5", [
+        nome, email, senha_hash, fotoFinal, req.usuario.usuario_id,
       ]);
     } else {
-      await pool.query("UPDATE usuarios SET nome=$1, email=$2 WHERE id=$3", [
-        nome, email, req.usuario.usuario_id,
+      await pool.query("UPDATE usuarios SET nome=$1, email=$2, foto_url=$3 WHERE id=$4", [
+        nome, email, fotoFinal, req.usuario.usuario_id,
       ]);
     }
-    res.json({ success: true, message: "Dados atualizados!" });
+    res.json({ success: true, message: "Dados atualizados!", foto: fotoFinal });
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: "Erro ao atualizar." });

@@ -76,6 +76,14 @@ body {
 
 .auth-field input::placeholder { color: #7b7f92; }
 
+.auth-hint {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.78rem;
+  color: #8b8fa3;
+  line-height: 1.4;
+}
+
 .auth-field input:focus {
   outline: none;
   background-color: #2c3042;

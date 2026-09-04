@@ -26,6 +26,7 @@ function validateForm(event) {
           JSON.stringify({
             id: data.user.id,
             nome: data.user.nome,
+            foto: data.user.foto || null,
           })
         );
         window.location.href = "/home.html";

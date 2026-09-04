@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS usuarios (
   nome TEXT UNIQUE NOT NULL,
   email TEXT UNIQUE,
   senha_hash TEXT NOT NULL,
+  foto_url TEXT,
   criado_em TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
