@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS trocas (
 CREATE TABLE IF NOT EXISTS troca_mensagens (
   id SERIAL PRIMARY KEY,
   troca_id INTEGER NOT NULL REFERENCES trocas(id) ON DELETE CASCADE,
+  usuario_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
   remetente TEXT NOT NULL CHECK (remetente IN ('user', 'seller')),
   texto TEXT NOT NULL,
   criado_em TIMESTAMPTZ NOT NULL DEFAULT now()

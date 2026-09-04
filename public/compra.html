@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Finalizar Compra - Rotation</title>
   <meta name="description" content="Finalização de compra com cupons de desconto." />
+  <link rel="stylesheet" href="/Css/toast.css" />
   <style>
     body {
       background: linear-gradient(to bottom, #26272B, #38393e 85%);
@@ -187,6 +188,7 @@
       </div>
     </div>
   </main>
+  <script src="/Js/toast.js"></script>
   <script>
     function formatPrice(val){return "R$ " + Number(val).toFixed(2).replace('.',',');}
     function getQueryParam(param) {
@@ -249,9 +251,9 @@
     document.getElementById("addCouponBtn").onclick = async function() {
       const cup = document.getElementById("newCouponInput").value.trim().toUpperCase().replace(/\s/g,'');
       const val = parseInt(document.getElementById("newCouponValue").value);
-      if (cup.length<2 || isNaN(val) || val < 1 || val > 90) { alert('Preencha o código e valor corretamente.'); return;}
+      if (cup.length<2 || isNaN(val) || val < 1 || val > 90) { toast('Preencha o código e valor corretamente.', 'error'); return;}
       const token = localStorage.getItem('token');
-      if (!token) { alert('Você precisa estar logado para criar um cupom.'); return; }
+      if (!token) { toast('Você precisa estar logado para criar um cupom.', 'error'); return; }
       try {
         const res = await fetch('/api/cupons', {
           method: 'POST',
@@ -259,12 +261,13 @@
           body: JSON.stringify({ codigo: cup, desconto: val/100 })
         });
         const data = await res.json();
-        if (!data.success) { alert(data.message || 'Erro ao adicionar cupom.'); return; }
+        if (!data.success) { toast(data.message || 'Erro ao adicionar cupom.', 'error'); return; }
+        toast('Cupom adicionado!', 'success');
         renderCouponList();
         document.getElementById("newCouponInput").value = ""; document.getElementById("newCouponValue").value = "";
       } catch (err) {
         console.error(err);
-        alert('Erro ao adicionar cupom.');
+        toast('Erro ao adicionar cupom.', 'error');
       }
     };
     // Renderiza lista de cupons a partir do banco de dados

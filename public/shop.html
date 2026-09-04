@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Shop - Rotation</title>
   <meta name="description" content="Encontre as melhores ofertas." />
+  <link rel="stylesheet" href="/Css/toast.css" />
   <style>
     body {
       background: linear-gradient(to bottom, #26272B, #38393e 85%);
@@ -323,6 +324,7 @@
         href="mailto:rotationsup@gmail.com.br">rotationsup@gmail.com.br</a></p>
   </footer>
 
+  <script src="/Js/toast.js"></script>
   <script>
     const usuario = JSON.parse(localStorage.getItem("usuarioLogado"));
 
@@ -350,7 +352,7 @@
     async function marcarVendido(id) {
       const token = localStorage.getItem('token');
       if (!token) {
-        alert('Você precisa estar logado.');
+        toast('Você precisa estar logado.', 'error');
         return;
       }
       const res = await fetch(`/api/produtos/${id}/vendido`, {
@@ -359,9 +361,10 @@
       });
       const data = await res.json();
       if (data.success) {
+        toast('Produto marcado como vendido!', 'success');
         carregarProdutos();
       } else {
-        alert(data.message || 'Erro ao marcar como vendido.');
+        toast(data.message || 'Erro ao marcar como vendido.', 'error');
       }
     }
 

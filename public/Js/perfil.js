@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const confirma = document.getElementById("confirma-senha").value;
 
     if (senha && senha !== confirma) {
-      alert("Senhas não conferem!");
+      toast("Senhas não conferem!", "error");
       return;
     }
 
@@ -49,12 +49,12 @@ document.addEventListener("DOMContentLoaded", () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        alert(data.message);
+        toast(data.message, data.success ? "success" : "error");
         if (data.success) {
           localStorage.setItem("usuarioLogado", JSON.stringify({ id: user.id, nome, email }));
         }
       })
-      .catch(() => alert("Erro ao atualizar!"));
+      .catch(() => toast("Erro ao atualizar!", "error"));
   });
 
   // Botão de deletar conta
@@ -72,12 +72,12 @@ document.addEventListener("DOMContentLoaded", () => {
       })
         .then((res) => res.json())
         .then((data) => {
-          alert(data.message);
+          toast(data.message, data.success ? "success" : "error");
           localStorage.removeItem("usuarioLogado");
           localStorage.removeItem("token");
-          window.location.href = "/index.html";
+          setTimeout(() => window.location.href = "/index.html", 900);
         })
-        .catch(() => alert("Erro ao deletar a conta."));
+        .catch(() => toast("Erro ao deletar a conta.", "error"));
     }
   });
 });

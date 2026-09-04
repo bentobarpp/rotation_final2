@@ -1,5 +1,7 @@
 const express = require("express");
 const cors = require("cors");
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const pool = require("./db");
@@ -10,7 +12,33 @@ if (!JWT_SECRET) {
   throw new Error("JWT_SECRET não configurado.");
 }
 
-app.use(cors());
+// A maioria das páginas usa <script>/<style> inline, então um CSP restrito
+// quebraria o site inteiro sem uma reescrita grande; mantemos os outros
+// cabeçalhos de segurança do helmet (HSTS, no-sniff, referrer-policy, etc).
+app.use(helmet({ contentSecurityPolicy: false }));
+
+const allowedOrigins = [
+  process.env.SITE_URL,
+  "https://rotationfinal2.vercel.app",
+  "http://localhost:3000",
+  "http://localhost:3001",
+].filter(Boolean);
+
+app.use(
+  cors({
+    origin: allowedOrigins,
+  })
+);
+
+// Limita tentativas de login/cadastro por IP para dificultar força bruta.
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: "Muitas tentativas. Tente novamente em alguns minutos." },
+});
+
 app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true }));
 
@@ -32,7 +60,7 @@ const router = express.Router();
 
 // ---------- AUTENTICAÇÃO ----------
 
-router.post("/sign-in", async (req, res) => {
+router.post("/sign-in", authLimiter, async (req, res) => {
   const { nome, email, senha } = req.body;
   if (!nome || !senha) {
     return res.status(400).json({ success: false, message: "Nome e senha são obrigatórios." });
@@ -53,7 +81,7 @@ router.post("/sign-in", async (req, res) => {
   }
 });
 
-router.post("/login", async (req, res) => {
+router.post("/login", authLimiter, async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) {
     return res.status(400).json({ success: false, message: "Usuário e senha são obrigatórios." });
@@ -299,11 +327,12 @@ router.put("/trocas/:id/vendido", authMiddleware, async (req, res) => {
   }
 });
 
-router.get("/trocas/:id/mensagens", async (req, res) => {
+// Cada usuário só enxerga a própria conversa sobre uma troca — nunca a de outra pessoa.
+router.get("/trocas/:id/mensagens", authMiddleware, async (req, res) => {
   try {
     const { rows } = await pool.query(
-      "SELECT id, remetente, texto, criado_em AS \"criadoEm\" FROM troca_mensagens WHERE troca_id=$1 ORDER BY criado_em ASC",
-      [req.params.id]
+      "SELECT id, remetente, texto, criado_em AS \"criadoEm\" FROM troca_mensagens WHERE troca_id=$1 AND usuario_id=$2 ORDER BY criado_em ASC",
+      [req.params.id, req.usuario.usuario_id]
     );
     res.json({ success: true, results: rows });
   } catch (err) {
@@ -322,12 +351,12 @@ router.post("/trocas/:id/mensagens", authMiddleware, async (req, res) => {
     if (trocaRows.length === 0) return res.status(404).json({ success: false, message: "Troca não encontrada." });
 
     const { rows: userMsg } = await pool.query(
-      "INSERT INTO troca_mensagens (troca_id, remetente, texto) VALUES ($1,'user',$2) RETURNING id, remetente, texto, criado_em AS \"criadoEm\"",
-      [req.params.id, texto.trim()]
+      "INSERT INTO troca_mensagens (troca_id, usuario_id, remetente, texto) VALUES ($1,$2,'user',$3) RETURNING id, remetente, texto, criado_em AS \"criadoEm\"",
+      [req.params.id, req.usuario.usuario_id, texto.trim()]
     );
     const { rows: sellerMsg } = await pool.query(
-      "INSERT INTO troca_mensagens (troca_id, remetente, texto) VALUES ($1,'seller',$2) RETURNING id, remetente, texto, criado_em AS \"criadoEm\"",
-      [req.params.id, "Obrigado pela mensagem! Responderemos em breve."]
+      "INSERT INTO troca_mensagens (troca_id, usuario_id, remetente, texto) VALUES ($1,$2,'seller',$3) RETURNING id, remetente, texto, criado_em AS \"criadoEm\"",
+      [req.params.id, req.usuario.usuario_id, "Obrigado pela mensagem! Responderemos em breve."]
     );
     res.status(201).json({ success: true, mensagens: [userMsg[0], sellerMsg[0]] });
   } catch (err) {

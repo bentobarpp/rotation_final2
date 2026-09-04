@@ -6,6 +6,7 @@
     <title>Upload de Tênis - Rotation</title>
     <meta name="description" content="Venda seu tênis exclusivo" />
     <link rel="stylesheet" href="/Css/shop.css" />
+    <link rel="stylesheet" href="/Css/toast.css" />
     <style>
         body {
             background: linear-gradient(to bottom, #26272B, #38393e 85%);
@@ -202,6 +203,7 @@
     </p>
 </footer>
 
+<script src="/Js/toast.js"></script>
 <script>
 document.getElementById("uploadForm").addEventListener("submit", function (event) {
     event.preventDefault();
@@ -217,22 +219,22 @@ document.getElementById("uploadForm").addEventListener("submit", function (event
 
     // Basic validation
     if (!shoeName || !shoePrice || !shoeSize || !shoeDescription || !shoeMainImage) {
-        alert("Por favor, preencha todos os campos obrigatórios (Nome, Preço, Tamanho, Descrição, Imagem Principal).");
+        toast("Preencha todos os campos obrigatórios (Nome, Preço, Tamanho, Descrição, Imagem Principal).", "error");
         return;
     }
-    
+
     // Check for logged-in user
     const usuarioString = localStorage.getItem("usuarioLogado");
     if (!usuarioString) {
-        alert("Você precisa estar logado para vender um tênis. Redirecionando para a página de login.");
-        window.location.href = '/index.html'; // Redirect to login page
+        toast("Você precisa estar logado para vender um tênis. Redirecionando...", "error");
+        setTimeout(() => window.location.href = '/index.html', 1200);
         return;
     }
 
     const usuario = JSON.parse(usuarioString);
     if (!usuario || !usuario.id) {
-        alert("Dados do usuário logado inválidos. Por favor, faça login novamente. Redirecionando para a página de login.");
-        window.location.href = '/index.html'; // Redirect to login page
+        toast("Dados do usuário inválidos. Faça login novamente.", "error");
+        setTimeout(() => window.location.href = '/index.html', 1200);
         return;
     }
     
@@ -269,12 +271,9 @@ document.getElementById("uploadForm").addEventListener("submit", function (event
     })
     .then(response => {
         if (response.ok) {
-            alert('Tênis adicionado com sucesso!');
-            // Optional: Clear form fields after successful submission
+            toast('Tênis adicionado com sucesso!', 'success');
             document.getElementById("uploadForm").reset();
-            // Redirect to a product detail page or shop page
-            window.location.href = '/shop.html'; 
-            
+            setTimeout(() => window.location.href = '/shop.html', 900);
         } else {
             // If response is not OK, try to parse the error message from the server
             return response.json().then(err => {
@@ -284,7 +283,7 @@ document.getElementById("uploadForm").addEventListener("submit", function (event
     })
     .catch(error => {
         console.error('Erro ao enviar o tênis:', error);
-        alert('Erro ao enviar o tênis: ' + error.message);
+        toast('Erro ao enviar o tênis: ' + error.message, 'error');
     });
 });
 </script>

@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Trocas - Rotation</title>
   <meta name="description" content="Anuncie tênis para troca, envie e receba propostas ou converse via chat.">
+  <link rel="stylesheet" href="/Css/toast.css" />
   <style>
     body {
       background: linear-gradient(to bottom, #26272B, #38393e 85%);
@@ -581,6 +582,7 @@
     </div>
   </div>
 
+  <script src="/Js/toast.js"></script>
   <script>
     const form = document.getElementById('sneakerForm'),
       list = document.getElementById('sneaker-list'),
@@ -685,11 +687,11 @@
         files = this.shoeImgs.files;
 
       if (!nome || !trocaPor || files.length === 0) {
-        alert("Preencha todos os campos obrigatórios!");
+        toast("Preencha todos os campos obrigatórios!", "error");
         return;
       }
       if (!localStorage.getItem('token')) {
-        alert("Você precisa estar logado para anunciar uma troca.");
+        toast("Você precisa estar logado para anunciar uma troca.", "error");
         return;
       }
 
@@ -699,13 +701,14 @@
             method: 'POST',
             body: JSON.stringify({ nome, descricao, trocaPor, imagens })
           });
-          if (!data.success) { alert(data.message || 'Erro ao criar anúncio.'); return; }
+          if (!data.success) { toast(data.message || 'Erro ao criar anúncio.', 'error'); return; }
+          toast('Anúncio criado com sucesso!', 'success');
           await carregarTrocas();
           form.reset();
           imgPreview.innerHTML = "";
         } catch (err) {
           console.error(err);
-          alert('Erro ao criar anúncio.');
+          toast('Erro ao criar anúncio.', 'error');
         }
       });
     });
@@ -720,6 +723,14 @@
       document.getElementById('chatTitle').textContent = "Chat - " + sneakerName;
       document.getElementById('chatMessages').innerHTML = '';
       document.getElementById('chatModal').classList.add('active');
+
+      if (!localStorage.getItem('token')) {
+        addMsgToChat('seller', 'Você precisa estar logado para conversar. Faça login e tente novamente.');
+        document.getElementById('chatInput').disabled = true;
+        document.getElementById('chatSendBtn').disabled = true;
+        return;
+      }
+      document.getElementById('chatInput').disabled = false;
       await loadMessages(trocaId);
       document.getElementById('chatInput').value = '';
       document.getElementById('chatSendBtn').disabled = true;
@@ -764,7 +775,7 @@
       const texto = document.getElementById('chatInput').value.trim();
       if (!activeChat || texto === '') return;
       if (!localStorage.getItem('token')) {
-        alert('Você precisa estar logado para enviar mensagens.');
+        toast('Você precisa estar logado para enviar mensagens.', 'error');
         return;
       }
       document.getElementById('chatInput').value = '';
@@ -774,11 +785,11 @@
           method: 'POST',
           body: JSON.stringify({ texto })
         });
-        if (!data.success) { alert(data.message || 'Erro ao enviar mensagem.'); return; }
+        if (!data.success) { toast(data.message || 'Erro ao enviar mensagem.', 'error'); return; }
         data.mensagens.forEach(m => addMsgToChat(m.remetente, m.texto));
       } catch (err) {
         console.error(err);
-        alert('Erro ao enviar mensagem.');
+        toast('Erro ao enviar mensagem.', 'error');
       }
     };
 
@@ -802,13 +813,14 @@
     async function markAsSold(id, button) {
       try {
         const data = await apiFetch(`/api/trocas/${id}/vendido`, { method: 'PUT' });
-        if (!data.success) { alert(data.message || 'Erro ao marcar como vendido.'); return; }
+        if (!data.success) { toast(data.message || 'Erro ao marcar como vendido.', 'error'); return; }
+        toast('Marcado como vendido!', 'success');
         button.parentNode.parentNode.style.opacity = '0.5';
         button.textContent = "Vendido";
         button.disabled = true;
       } catch (err) {
         console.error(err);
-        alert('Erro ao marcar como vendido.');
+        toast('Erro ao marcar como vendido.', 'error');
       }
     }
 
