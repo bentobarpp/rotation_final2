@@ -66,11 +66,11 @@ img { max-width: 100%; }
 .footer-logo { display: flex; align-items: center; gap: 10px; }
 .footer-logo-mark { width: 40px; height: 40px; border-radius: 6px; display: block; }
 .footer-logo-word {
-  font-family: var(--bp-font-serif);
+  font-family: 'Baloo 2', sans-serif;
   font-weight: 700;
   font-size: 1.3rem;
   color: #fff;
-  letter-spacing: 0.02em;
+  letter-spacing: 0;
 }
 
 .footer-social { display: flex; gap: 10px; }
