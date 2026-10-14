@@ -23,8 +23,9 @@
       });
     }
 
-    if (media && produtos[0] && produtos[0].imagemUrl) {
-      media.src = produtos[0].imagemUrl;
+    const firstImg = produtos[0] && produtos[0].imagens && produtos[0].imagens[0];
+    if (media && firstImg) {
+      media.src = firstImg;
       media.alt = produtos[0].nome || "";
       media.style.display = "block";
     }

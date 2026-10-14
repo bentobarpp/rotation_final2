@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS produtos (
   id SERIAL PRIMARY KEY,
   nome TEXT NOT NULL,
   preco NUMERIC(10,2) NOT NULL,
-  imagem_url TEXT NOT NULL,
+  imagens JSONB NOT NULL DEFAULT '[]',
   tamanho TEXT,
   descricao TEXT,
   categoria TEXT NOT NULL DEFAULT 'tenis' CHECK (categoria IN ('tenis', 'roupas', 'acessorios')),

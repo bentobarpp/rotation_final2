@@ -124,7 +124,7 @@ async function carregarProduto() {
     const p = data.produto;
     displayProduct({
       name: p.nome,
-      images: [p.imagemUrl],
+      images: p.imagens && p.imagens.length ? p.imagens : [""],
       price: parseFloat(p.preco) || 0,
       size: p.tamanho || "N/D",
       description: p.descricao || "Sem descrição disponível.",

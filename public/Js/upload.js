@@ -7,35 +7,58 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+const MAX_IMAGENS = 5;
 const shoeMainImageInput = document.getElementById("shoeMainImage");
 const imgPreview = document.getElementById("imgPreview");
-let shoeImageBase64 = null;
+let shoeImagens = [];
 
-shoeMainImageInput.addEventListener("change", function () {
+function renderPreview() {
   imgPreview.innerHTML = "";
-  shoeImageBase64 = null;
-  const file = this.files[0];
-  if (!file) return;
-  if (!file.type.startsWith("image/")) {
-    toast("Esse arquivo não é uma imagem compatível. Envie uma foto em JPG, PNG ou WEBP.", "error");
+  shoeImagens.forEach((dataUrl, index) => {
+    const item = document.createElement("div");
+    item.className = "upload-img-item";
+    item.innerHTML = `
+      <img src="${dataUrl}" alt="Foto ${index + 1}">
+      <button type="button" class="upload-img-remove" aria-label="Remover foto ${index + 1}">&times;</button>
+    `;
+    item.querySelector(".upload-img-remove").addEventListener("click", () => {
+      shoeImagens.splice(index, 1);
+      renderPreview();
+    });
+    imgPreview.appendChild(item);
+  });
+}
+
+function lerImagemValida(file) {
+  return new Promise((resolve) => {
+    if (!file.type.startsWith("image/")) return resolve(null);
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const dataUrl = e.target.result;
+      const ok = await testarImagem(dataUrl);
+      resolve(ok ? dataUrl : null);
+    };
+    reader.onerror = () => resolve(null);
+    reader.readAsDataURL(file);
+  });
+}
+
+shoeMainImageInput.addEventListener("change", async function () {
+  const espacoLivre = MAX_IMAGENS - shoeImagens.length;
+  if (espacoLivre <= 0) {
+    toast(`Máximo de ${MAX_IMAGENS} fotos por peça.`, "error");
     this.value = "";
     return;
   }
-  const reader = new FileReader();
-  reader.onload = async (e) => {
-    const dataUrl = e.target.result;
-    const ok = await testarImagem(dataUrl);
-    if (!ok) {
-      toast("Não foi possível ler essa imagem (formatos RAW como .DNG não são suportados). Envie uma foto em JPG, PNG ou WEBP.", "error");
-      shoeMainImageInput.value = "";
-      return;
-    }
-    shoeImageBase64 = dataUrl;
-    const img = document.createElement("img");
-    img.src = dataUrl;
-    imgPreview.appendChild(img);
-  };
-  reader.readAsDataURL(file);
+  const files = Array.from(this.files).slice(0, espacoLivre);
+  const resultados = await Promise.all(files.map(lerImagemValida));
+  const invalidas = resultados.filter((r) => r === null).length;
+  if (invalidas > 0) {
+    toast(`${invalidas} arquivo(s) não é/são imagens compatíveis (formatos RAW como .DNG não são suportados). Envie JPG, PNG ou WEBP.`, "error");
+  }
+  shoeImagens = shoeImagens.concat(resultados.filter(Boolean));
+  this.value = "";
+  renderPreview();
 });
 
 document.getElementById("uploadForm").addEventListener("submit", function (event) {
@@ -50,8 +73,8 @@ document.getElementById("uploadForm").addEventListener("submit", function (event
   const shoeSize = document.getElementById("shoeSize").value.trim();
   const shoeDescription = document.getElementById("shoeDescription").value.trim();
 
-  if (!shoeName || !shoePrice || !shoeSize || !shoeDescription || !shoeImageBase64) {
-    toast("Preencha todos os campos obrigatórios, incluindo uma foto válida.", "error");
+  if (!shoeName || !shoePrice || !shoeSize || !shoeDescription || shoeImagens.length === 0) {
+    toast("Preencha todos os campos obrigatórios, incluindo ao menos uma foto válida.", "error");
     return;
   }
 
@@ -68,7 +91,7 @@ document.getElementById("uploadForm").addEventListener("submit", function (event
     preco: shoePrice,
     tamanho: shoeSize,
     descricao: shoeDescription,
-    imagemUrl: shoeImageBase64,
+    imagens: shoeImagens,
   };
 
   apiFetch("/api/produtos", { method: "POST", body: JSON.stringify(shoeData) })
@@ -76,8 +99,8 @@ document.getElementById("uploadForm").addEventListener("submit", function (event
       if (data.success) {
         toast("Peça adicionada com sucesso!", "success");
         document.getElementById("uploadForm").reset();
-        imgPreview.innerHTML = "";
-        shoeImageBase64 = null;
+        shoeImagens = [];
+        renderPreview();
         setTimeout(() => (window.location.href = "/shop.html"), 900);
       } else {
         toast(data.message || "Erro ao enviar a peça.", "error");

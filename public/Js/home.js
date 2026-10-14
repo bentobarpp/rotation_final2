@@ -6,7 +6,7 @@ slide.innerHTML = '<div class="carousel-skeleton">' + '<div class="skeleton"></d
 async function carregarDestaques() {
   try {
     const data = await apiFetch("/api/produtos");
-    allItems = (data.results || []).map((p) => ({ img: p.imagemUrl, title: p.nome, id: p.id }));
+    allItems = (data.results || []).map((p) => ({ img: (p.imagens || [])[0] || "", title: p.nome, id: p.id }));
   } catch (err) {
     console.error("Erro ao carregar produtos:", err);
     allItems = [];

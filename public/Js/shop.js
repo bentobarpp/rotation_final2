@@ -114,7 +114,7 @@ function renderProducts(lista) {
     card.innerHTML = `
       <span class="tag">${escapeHtml(tag)}</span>
       <a href="/detalhes.html?id=${encodeURIComponent(prod.id)}" class="thumb">
-        <img src="${escapeHtml(prod.imagemUrl)}" alt="${escapeHtml(prod.nome)}" loading="lazy">
+        <img src="${escapeHtml((prod.imagens || [])[0] || "")}" alt="${escapeHtml(prod.nome)}" loading="lazy">
       </a>
       <div class="info">
         <a href="/detalhes.html?id=${encodeURIComponent(prod.id)}" style="text-decoration:none;color:inherit;">

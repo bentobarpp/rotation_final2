@@ -272,7 +272,7 @@ router.get("/produtos", async (req, res) => {
       where += ` AND p.categoria = ANY($${params.length})`;
     }
     const { rows } = await pool.query(
-      `SELECT p.id, p.nome, p.preco, p.imagem_url AS "imagemUrl", p.tamanho, p.descricao,
+      `SELECT p.id, p.nome, p.preco, p.imagens, p.tamanho, p.descricao,
               p.categoria, p.marca, p.condicao, p.criado_em AS "criadoEm",
               p.usuario_id AS "usuarioId", u.nome AS "vendedorNome"
        FROM produtos p LEFT JOIN usuarios u ON u.id = p.usuario_id
@@ -289,7 +289,7 @@ router.get("/produtos", async (req, res) => {
 router.get("/produtos/:id", async (req, res) => {
   try {
     const { rows } = await pool.query(
-      `SELECT id, nome, preco, imagem_url AS "imagemUrl", tamanho, descricao,
+      `SELECT id, nome, preco, imagens, tamanho, descricao,
               categoria, marca, condicao, usuario_id AS "usuarioId"
        FROM produtos WHERE id = $1`,
       [req.params.id]
@@ -303,9 +303,12 @@ router.get("/produtos/:id", async (req, res) => {
 });
 
 router.post("/produtos", authMiddleware, adminOnly, writeLimiter, async (req, res) => {
-  const { nome, preco, imagemUrl, tamanho, descricao, categoria, marca, condicao } = req.body;
-  if (!nome || !preco || !imagemUrl) {
-    return res.status(400).json({ success: false, message: "Campos obrigatórios: nome, preço e imagem." });
+  const { nome, preco, imagens, tamanho, descricao, categoria, marca, condicao } = req.body;
+  if (!nome || !preco || !Array.isArray(imagens) || imagens.length === 0) {
+    return res.status(400).json({ success: false, message: "Campos obrigatórios: nome, preço e ao menos uma imagem." });
+  }
+  if (imagens.length > 5 || !imagens.every(isDataUrlImagem)) {
+    return res.status(400).json({ success: false, message: "Envie de 1 a 5 imagens válidas." });
   }
   const erroNome = textoInvalido(nome, { min: 2, max: 100, label: "Nome" });
   if (erroNome) return res.status(400).json({ success: false, message: erroNome });
@@ -323,17 +326,14 @@ router.post("/produtos", authMiddleware, adminOnly, writeLimiter, async (req, re
   if (!Number.isFinite(precoNum) || precoNum <= 0 || precoNum > 1000000) {
     return res.status(400).json({ success: false, message: "Preço inválido." });
   }
-  if (!isDataUrlImagem(imagemUrl)) {
-    return res.status(400).json({ success: false, message: "Imagem inválida." });
-  }
   const categoriaFinal = categoria && CATEGORIAS_VALIDAS.includes(categoria) ? categoria : "tenis";
   const condicaoFinal = condicao && CONDICOES_VALIDAS.includes(condicao) ? condicao : "usado";
   try {
     const { rows } = await pool.query(
-      `INSERT INTO produtos (nome, preco, imagem_url, tamanho, descricao, categoria, marca, condicao, usuario_id)
+      `INSERT INTO produtos (nome, preco, imagens, tamanho, descricao, categoria, marca, condicao, usuario_id)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
-       RETURNING id, nome, preco, imagem_url AS "imagemUrl", tamanho, descricao, categoria, marca, condicao, usuario_id AS "usuarioId"`,
-      [nome.trim(), precoNum, imagemUrl, tamanho || null, descricao || null, categoriaFinal, marca ? marca.trim() : null, condicaoFinal, req.usuario.usuario_id]
+       RETURNING id, nome, preco, imagens, tamanho, descricao, categoria, marca, condicao, usuario_id AS "usuarioId"`,
+      [nome.trim(), precoNum, JSON.stringify(imagens), tamanho || null, descricao || null, categoriaFinal, marca ? marca.trim() : null, condicaoFinal, req.usuario.usuario_id]
     );
     res.status(201).json({ success: true, message: "Peça criada com sucesso!", produto: rows[0] });
   } catch (err) {
