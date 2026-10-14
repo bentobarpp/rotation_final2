@@ -20,7 +20,7 @@
   function highlightActiveNav() {
     const path = window.location.pathname;
     const categoria = new URLSearchParams(window.location.search).get("categoria");
-    document.querySelectorAll(".nav-links a").forEach((a) => {
+    document.querySelectorAll(".nav-links .nav-top-link").forEach((a) => {
       a.classList.remove("selected");
       let url;
       try { url = new URL(a.getAttribute("href"), window.location.origin); } catch { return; }
