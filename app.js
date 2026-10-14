@@ -61,9 +61,8 @@ const authLimiter = rateLimit({
   message: { success: false, message: "Muitas tentativas. Tente novamente em alguns minutos." },
 });
 
-// Limite mais permissivo para ações de escrita autenticadas (publicar
-// peça/troca, mandar mensagem, criar cupom) — evita spam/abuso sem
-// atrapalhar uso normal.
+// Limite mais permissivo para ações de escrita autenticadas do admin
+// (publicar/remover peça) — evita abuso sem atrapalhar o uso normal.
 const writeLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 60,
@@ -359,123 +358,6 @@ router.delete("/produtos/:id", authMiddleware, adminOnly, async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: "Erro ao remover peça." });
-  }
-});
-
-// ---------- TROCAS ----------
-
-router.get("/trocas", async (req, res) => {
-  try {
-    const { rows } = await pool.query(
-      `SELECT t.id, t.nome, t.descricao, t.troca_por AS "trocaPor", t.imagens,
-              t.usuario_id AS "usuarioId", t.vendido, u.nome AS "donoNome"
-       FROM trocas t LEFT JOIN usuarios u ON u.id = t.usuario_id
-       WHERE t.vendido = false ORDER BY t.criado_em DESC`
-    );
-    res.json({ success: true, results: rows });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: "Erro ao listar trocas." });
-  }
-});
-
-router.get("/trocas/:id", async (req, res) => {
-  try {
-    const { rows } = await pool.query(
-      `SELECT id, nome, descricao, troca_por AS "trocaPor", imagens, usuario_id AS "usuarioId", vendido
-       FROM trocas WHERE id=$1`,
-      [req.params.id]
-    );
-    if (rows.length === 0) return res.status(404).json({ success: false, message: "Troca não encontrada." });
-    res.json({ success: true, troca: rows[0] });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: "Erro ao buscar troca." });
-  }
-});
-
-router.post("/trocas", authMiddleware, writeLimiter, async (req, res) => {
-  const { nome, descricao, trocaPor, imagens } = req.body;
-  if (!nome || !trocaPor || !Array.isArray(imagens) || imagens.length === 0) {
-    return res.status(400).json({ success: false, message: "Preencha nome, troca desejada e ao menos uma imagem." });
-  }
-  const erroNome = textoInvalido(nome, { min: 2, max: 100, label: "Nome" });
-  if (erroNome) return res.status(400).json({ success: false, message: erroNome });
-  const erroTroca = textoInvalido(trocaPor, { min: 1, max: 150, label: "Troca desejada" });
-  if (erroTroca) return res.status(400).json({ success: false, message: erroTroca });
-  if (descricao) {
-    const erroDesc = textoInvalido(descricao, { min: 1, max: 600, label: "Descrição" });
-    if (erroDesc) return res.status(400).json({ success: false, message: erroDesc });
-  }
-  if (imagens.length > 3 || !imagens.every(isDataUrlImagem)) {
-    return res.status(400).json({ success: false, message: "Envie até 3 imagens válidas." });
-  }
-  try {
-    const { rows } = await pool.query(
-      `INSERT INTO trocas (usuario_id, nome, descricao, troca_por, imagens)
-       VALUES ($1,$2,$3,$4,$5)
-       RETURNING id, nome, descricao, troca_por AS "trocaPor", imagens, usuario_id AS "usuarioId", vendido`,
-      [req.usuario.usuario_id, nome, descricao || null, trocaPor, JSON.stringify(imagens)]
-    );
-    res.status(201).json({ success: true, message: "Anúncio de troca criado!", troca: rows[0] });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: "Erro ao criar troca." });
-  }
-});
-
-router.put("/trocas/:id/vendido", authMiddleware, async (req, res) => {
-  try {
-    const { rows } = await pool.query("SELECT usuario_id FROM trocas WHERE id=$1", [req.params.id]);
-    if (rows.length === 0) return res.status(404).json({ success: false, message: "Troca não encontrada." });
-    if (rows[0].usuario_id !== req.usuario.usuario_id) {
-      return res.status(403).json({ success: false, message: "Não autorizado." });
-    }
-    await pool.query("UPDATE trocas SET vendido = true WHERE id=$1", [req.params.id]);
-    res.json({ success: true, message: "Marcado como vendido." });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: "Erro ao atualizar troca." });
-  }
-});
-
-// Cada usuário só enxerga a própria conversa sobre uma troca — nunca a de outra pessoa.
-router.get("/trocas/:id/mensagens", authMiddleware, async (req, res) => {
-  try {
-    const { rows } = await pool.query(
-      "SELECT id, remetente, texto, criado_em AS \"criadoEm\" FROM troca_mensagens WHERE troca_id=$1 AND usuario_id=$2 ORDER BY criado_em ASC",
-      [req.params.id, req.usuario.usuario_id]
-    );
-    res.json({ success: true, results: rows });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: "Erro ao listar mensagens." });
-  }
-});
-
-router.post("/trocas/:id/mensagens", authMiddleware, writeLimiter, async (req, res) => {
-  const { texto } = req.body;
-  if (!texto || !texto.trim()) {
-    return res.status(400).json({ success: false, message: "Mensagem vazia." });
-  }
-  const erroTexto = textoInvalido(texto, { min: 1, max: 1000, label: "Mensagem" });
-  if (erroTexto) return res.status(400).json({ success: false, message: erroTexto });
-  try {
-    const { rows: trocaRows } = await pool.query("SELECT id FROM trocas WHERE id=$1", [req.params.id]);
-    if (trocaRows.length === 0) return res.status(404).json({ success: false, message: "Troca não encontrada." });
-
-    const { rows: userMsg } = await pool.query(
-      "INSERT INTO troca_mensagens (troca_id, usuario_id, remetente, texto) VALUES ($1,$2,'user',$3) RETURNING id, remetente, texto, criado_em AS \"criadoEm\"",
-      [req.params.id, req.usuario.usuario_id, texto.trim()]
-    );
-    const { rows: sellerMsg } = await pool.query(
-      "INSERT INTO troca_mensagens (troca_id, usuario_id, remetente, texto) VALUES ($1,$2,'seller',$3) RETURNING id, remetente, texto, criado_em AS \"criadoEm\"",
-      [req.params.id, req.usuario.usuario_id, "Obrigado pela mensagem! Responderemos em breve."]
-    );
-    res.status(201).json({ success: true, mensagens: [userMsg[0], sellerMsg[0]] });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: "Erro ao enviar mensagem." });
   }
 });
 

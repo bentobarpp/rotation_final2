@@ -12,13 +12,18 @@ function formatPreco(valor) {
   return "R$ " + Number(valor || 0).toFixed(2).replace(".", ",");
 }
 
-// Número da barpp no WhatsApp (DDI+DDD). Todo contato sobre uma peça vai
-// direto pra lá — não há checkout/pagamento no site.
-const BARPP_WHATSAPP = "5547988567247";
+// @ da barpp no Instagram. Todo contato sobre uma peça acontece por lá —
+// não há checkout/pagamento nem número de telefone expostos no site.
+// TODO: trocar pelo @ real assim que o perfil da loja existir.
+const BARPP_INSTAGRAM = "barpp.oficial";
 
-function whatsappLink(mensagem) {
-  const base = "https://wa.me/" + BARPP_WHATSAPP;
-  return mensagem ? base + "?text=" + encodeURIComponent(mensagem) : base;
+function instagramProfileLink() {
+  return "https://instagram.com/" + BARPP_INSTAGRAM;
+}
+
+// Abre o app/site do Instagram direto na conversa de DM com a loja.
+function instagramDmLink() {
+  return "https://ig.me/m/" + BARPP_INSTAGRAM;
 }
 
 async function apiFetch(url, options) {

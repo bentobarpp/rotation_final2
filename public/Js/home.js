@@ -19,8 +19,7 @@ function renderCarousel() {
     slide.innerHTML = "";
     document.querySelector(".carousel-container").innerHTML = `
       <div class="empty-state">
-        <span class="empty-emoji">🛍️</span>
-        <p>Ainda não há peças cadastradas. <a href="/upload.html">Seja o primeiro a vender!</a></p>
+        <p>Novidades em breve. <a href="https://instagram.com/barpp.oficial" target="_blank" rel="noopener">Acompanhe no Instagram</a>.</p>
       </div>`;
     return;
   }

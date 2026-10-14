@@ -92,10 +92,10 @@ function renderProducts(lista) {
   productList.innerHTML = "";
 
   if (lista.length === 0) {
+    const adminHint = usuario && usuario.isAdmin ? ` <a href="/upload.html">Adicionar peça</a>.` : "";
     productList.innerHTML = `
       <div class="empty-state">
-        <span class="empty-emoji">🔎</span>
-        <p>Nenhuma peça encontrada. <a href="/upload.html">Anuncie a sua!</a></p>
+        <p>Nenhuma peça encontrada.${adminHint}</p>
       </div>`;
     return;
   }

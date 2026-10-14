@@ -38,7 +38,8 @@ function displayProduct(product) {
           <span>${escapeHtml(condicaoLabel)}</span>
         </div>
         <div class="pdp-cta">
-          <a class="btn" id="btnWhatsapp" target="_blank" rel="noopener">Tenho interesse — falar no WhatsApp</a>
+          <a class="btn" id="btnInstagram" target="_blank" rel="noopener">Tenho interesse — chamar no Instagram</a>
+          <p class="pdp-cta-hint">Mencione o nome da peça na conversa.</p>
         </div>
         ${usuario && usuario.isAdmin ? `
           <div class="pdp-admin-actions">
@@ -60,8 +61,7 @@ function displayProduct(product) {
     </div>
   `;
 
-  const mensagem = `Olá! Tenho interesse na peça "${product.name}" (${formatPreco(product.price)}) que vi na barpp.`;
-  document.getElementById("btnWhatsapp").href = whatsappLink(mensagem);
+  document.getElementById("btnInstagram").href = instagramDmLink();
 
   if (hasMultipleImages) {
     let currentIndex = 0;
@@ -110,7 +110,7 @@ function displayProduct(product) {
 }
 
 async function carregarProduto() {
-  const notFound = '<div class="empty-state"><span class="empty-emoji">🚫</span><p>Produto não encontrado. <a href="/shop.html">Voltar para as Peças</a></p></div>';
+  const notFound = '<div class="empty-state"><p>Produto não encontrado. <a href="/shop.html">Voltar para as Peças</a></p></div>';
   if (!productId) {
     document.getElementById("productDetails").innerHTML = notFound;
     return;

@@ -10,14 +10,21 @@
   --bp-border: #e6e3dc;
   --bp-muted: #6c6c66;
   --bp-muted-2: #9a9a92;
-  --bp-accent: #b2461f;
+  --bp-accent: #93732f;
   --bp-success: #1f7a4d;
   --bp-error: #c0392b;
-  --bp-radius: 3px;
+  --bp-radius: 0px;
   --bp-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  --bp-font-serif: Georgia, 'Times New Roman', 'Iowan Old Style', serif;
 }
 
 * { box-sizing: border-box; }
+
+/* Garante que o atributo hidden sempre esconda o elemento, mesmo quando uma
+   classe (ex: .btn com display:flex) tentaria sobrepor o padrão do navegador.
+   Sem isso, controles como "+ Adicionar peça" podem vazar pra quem não é
+   admin. */
+[hidden] { display: none !important; }
 
 html { background: var(--bp-bg); }
 
@@ -38,16 +45,73 @@ img { max-width: 100%; }
   padding: 0 24px;
 }
 
-.rodape {
+/* Rodapé — aparece igual em toda página, só revelado quando o visitante
+   chega ao fim do conteúdo. */
+.site-footer {
   background: var(--bp-black);
-  color: #e9e8e2;
-  text-align: center;
-  padding: 42px 24px;
-  margin-top: 64px;
-  font-size: 0.92rem;
+  color: #d8d6cf;
+  margin-top: 70px;
 }
 
-.rodape a { color: #fff; text-decoration: underline; }
+.footer-top {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 56px 24px 40px;
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1fr 1fr;
+  gap: 32px 24px;
+}
+
+.footer-brand { display: flex; flex-direction: column; gap: 20px; }
+.footer-logo { display: flex; align-items: center; gap: 10px; }
+.footer-logo-mark { width: 40px; height: 40px; border-radius: 6px; display: block; }
+.footer-logo-word {
+  font-family: var(--bp-font-serif);
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: #fff;
+  letter-spacing: 0.02em;
+}
+
+.footer-social { display: flex; gap: 10px; }
+.footer-social-icon {
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  text-decoration: none;
+  transition: background 0.15s, border-color 0.15s;
+}
+.footer-social-icon:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.5); }
+.footer-social-icon svg { width: 18px; height: 18px; }
+
+.footer-col { display: flex; flex-direction: column; gap: 12px; }
+.footer-col-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #8d8b82;
+  margin: 0 0 4px;
+}
+.footer-col a, .footer-col span { color: #d8d6cf; text-decoration: none; font-size: 0.9rem; }
+.footer-col a:hover { color: #fff; text-decoration: underline; }
+
+.footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 20px 24px;
+  text-align: center;
+  font-size: 0.78rem;
+  color: #8d8b82;
+}
+
+@media (max-width: 760px) {
+  .footer-top { grid-template-columns: 1fr 1fr; }
+  .footer-brand { grid-column: 1 / -1; }
+}
 
 /* Botões */
 .btn {
@@ -80,11 +144,12 @@ img { max-width: 100%; }
 /* Títulos de seção */
 .section-title {
   text-align: center;
-  font-size: clamp(1.5rem, 3.4vw, 2.1rem);
-  font-weight: 800;
+  font-family: var(--bp-font-serif);
+  font-size: clamp(1.6rem, 3.4vw, 2.3rem);
+  font-weight: 700;
   margin: 0 0 8px;
   color: var(--bp-ink);
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
 }
 .section-title .accent { color: var(--bp-accent); }
 
@@ -110,11 +175,12 @@ img { max-width: 100%; }
   font-weight: 700;
 }
 .category-title {
-  font-size: clamp(2.1rem, 5vw, 3.1rem);
-  font-weight: 800;
+  font-family: var(--bp-font-serif);
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
   margin: 0;
-  letter-spacing: -0.01em;
-  line-height: 1.05;
+  letter-spacing: 0;
+  line-height: 1.1;
 }
 .category-row {
   display: flex;
@@ -270,3 +336,20 @@ img { max-width: 100%; }
   .filter-bar { gap: 14px 18px; }
   .filter-field select, .filter-field input { min-width: 100px; }
 }
+
+/* Páginas institucionais (privacidade, termos) */
+.prose {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 104px 24px 80px;
+}
+.prose h1 {
+  font-family: var(--bp-font-serif);
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+.prose .prose-updated { color: var(--bp-muted); font-size: 0.85rem; margin: 0 0 40px; }
+.prose h2 { font-size: 1.05rem; font-weight: 700; margin: 36px 0 12px; }
+.prose p, .prose li { color: var(--bp-muted); line-height: 1.75; font-size: 0.98rem; }
+.prose ul { padding-left: 20px; }
