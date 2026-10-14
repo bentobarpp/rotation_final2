@@ -1,7 +1,4 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="barpp">
   <rect width="200" height="200" fill="#0d0d0d"/>
-  <rect x="14" y="14" width="172" height="172" fill="none" stroke="#ffffff" stroke-width="1"/>
-  <rect x="19" y="19" width="162" height="162" fill="none" stroke="#ffffff" stroke-width="0.6"/>
-  <text x="100" y="118" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-weight="700" font-size="72" letter-spacing="4" fill="#ffffff">BP</text>
-  <line x1="74" y1="138" x2="126" y2="138" stroke="#ffffff" stroke-width="1"/>
+  <text x="100" y="140" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-weight="700" font-size="150" letter-spacing="-36" fill="#ffffff">BP</text>
 </svg>
