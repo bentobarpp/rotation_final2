@@ -27,9 +27,75 @@
       <span class="wordmark">barpp</span>
     </a>
     <nav class="nav-links">
-      <a href="/shop.html?categoria=tenis">Tênis</a>
-      <a href="/shop.html?categoria=roupas">Peças</a>
-      <a href="/shop.html?categoria=acessorios">Acessórios</a>
+      <div class="nav-item">
+        <a href="/shop.html?categoria=tenis">Tênis</a>
+        <button type="button" class="nav-caret" aria-label="Ver categorias de Tênis">&#9662;</button>
+        <div class="nav-dropdown" data-categoria="tenis">
+          <div class="nav-dropdown-inner">
+            <div class="nav-dropdown-col">
+              <p class="nav-dropdown-title">Categoria</p>
+              <a href="/shop.html?categoria=tenis">Ver tudo</a>
+              <a href="/shop.html?categoria=tenis&condicao=novo">Novo</a>
+              <a href="/shop.html?categoria=tenis&condicao=seminovo">Seminovo</a>
+              <a href="/shop.html?categoria=tenis&condicao=usado">Usado</a>
+            </div>
+            <div class="nav-dropdown-col">
+              <p class="nav-dropdown-title">Marcas</p>
+              <div class="nav-dropdown-marcas"><span class="nav-dropdown-empty">Em breve</span></div>
+            </div>
+            <div class="nav-dropdown-media">
+              <img alt="" style="display:none;">
+              <span class="nav-dropdown-label">Tênis</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="nav-item">
+        <a href="/shop.html?categoria=roupas">Peças</a>
+        <button type="button" class="nav-caret" aria-label="Ver categorias de Peças">&#9662;</button>
+        <div class="nav-dropdown" data-categoria="roupas">
+          <div class="nav-dropdown-inner">
+            <div class="nav-dropdown-col">
+              <p class="nav-dropdown-title">Categoria</p>
+              <a href="/shop.html?categoria=roupas">Ver tudo</a>
+              <a href="/shop.html?categoria=roupas&condicao=novo">Novo</a>
+              <a href="/shop.html?categoria=roupas&condicao=seminovo">Seminovo</a>
+              <a href="/shop.html?categoria=roupas&condicao=usado">Usado</a>
+            </div>
+            <div class="nav-dropdown-col">
+              <p class="nav-dropdown-title">Marcas</p>
+              <div class="nav-dropdown-marcas"><span class="nav-dropdown-empty">Em breve</span></div>
+            </div>
+            <div class="nav-dropdown-media">
+              <img alt="" style="display:none;">
+              <span class="nav-dropdown-label">Peças</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="nav-item">
+        <a href="/shop.html?categoria=acessorios">Acessórios</a>
+        <button type="button" class="nav-caret" aria-label="Ver categorias de Acessórios">&#9662;</button>
+        <div class="nav-dropdown" data-categoria="acessorios">
+          <div class="nav-dropdown-inner">
+            <div class="nav-dropdown-col">
+              <p class="nav-dropdown-title">Categoria</p>
+              <a href="/shop.html?categoria=acessorios">Ver tudo</a>
+              <a href="/shop.html?categoria=acessorios&condicao=novo">Novo</a>
+              <a href="/shop.html?categoria=acessorios&condicao=seminovo">Seminovo</a>
+              <a href="/shop.html?categoria=acessorios&condicao=usado">Usado</a>
+            </div>
+            <div class="nav-dropdown-col">
+              <p class="nav-dropdown-title">Marcas</p>
+              <div class="nav-dropdown-marcas"><span class="nav-dropdown-empty">Em breve</span></div>
+            </div>
+            <div class="nav-dropdown-media">
+              <img alt="" style="display:none;">
+              <span class="nav-dropdown-label">Acessórios</span>
+            </div>
+          </div>
+        </div>
+      </div>
       <a href="/shop.html">Marcas</a>
       <a href="/home.html#sobre">Sobre</a>
     </nav>
@@ -149,6 +215,7 @@
 <script src="/Js/reveal.js"></script>
 <script src="/Js/nav-search.js"></script>
 <script src="/Js/nav-auth.js"></script>
+<script src="/Js/nav-dropdown.js"></script>
 <script src="/Js/shop.js"></script>
 
 </body>

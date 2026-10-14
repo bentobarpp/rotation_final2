@@ -10,6 +10,8 @@ const CONDICAO_LABEL = { novo: "Novo", seminovo: "Seminovo", usado: "Peça Únic
 const params = new URLSearchParams(window.location.search);
 const categoria = params.get("categoria") || "";
 const buscaInicial = params.get("busca") || "";
+const marcaInicial = params.get("marca") || "";
+const condicaoInicial = params.get("condicao") || "";
 
 let produtos = [];
 const usuario = window.barppGetUser ? window.barppGetUser() : null;
@@ -23,6 +25,7 @@ function setupCategoryHeader() {
   document.getElementById("categorySub").textContent = meta.sub;
   document.title = meta.title + " - barpp";
   if (txtBusca && buscaInicial) txtBusca.value = buscaInicial;
+  if (condicaoInicial) document.getElementById("fCondicao").value = condicaoInicial;
   if (usuario && usuario.isAdmin) document.getElementById("adminAddBtn").hidden = false;
 }
 
@@ -36,6 +39,7 @@ async function carregarProdutos() {
     produtos = [];
   }
   popularFiltros(produtos);
+  if (marcaInicial) document.getElementById("fMarca").value = marcaInicial;
   aplicarFiltros();
 }
 

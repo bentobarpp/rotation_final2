@@ -52,6 +52,88 @@
 .brand .wordmark { font-family: 'Baloo 2', sans-serif; font-weight: 700; font-size: 1.3rem; letter-spacing: 0; }
 
 .nav-links { display: flex; gap: 2px; flex-wrap: wrap; }
+
+.nav-item { display: flex; align-items: center; }
+.nav-caret {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.55);
+  cursor: pointer;
+  padding: 9px 11px 9px 0;
+  margin-left: -8px;
+  font-size: 0.6rem;
+  line-height: 1;
+  font-family: inherit;
+}
+.nav-item:hover .nav-caret,
+.nav-item.open .nav-caret { color: #fff; }
+
+/* Mega menu — ancorado no #nav (fixed), por isso cobre a largura inteira
+   independente de qual aba disparou. */
+.nav-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: var(--bp-black, #0d0d0d);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 24px 44px rgba(0, 0, 0, 0.35);
+  padding: 34px 24px;
+  display: none;
+  z-index: 999;
+}
+.nav-item:hover .nav-dropdown,
+.nav-item:focus-within .nav-dropdown,
+.nav-item.open .nav-dropdown { display: block; }
+
+.nav-dropdown-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.2fr;
+  gap: 40px;
+  align-items: start;
+}
+.nav-dropdown-title {
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.42);
+  margin: 0 0 16px;
+}
+.nav-dropdown-col { display: flex; flex-direction: column; gap: 13px; }
+.nav-dropdown .nav-dropdown-col a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  padding: 0;
+  border-radius: 0;
+  background: none;
+}
+.nav-dropdown .nav-dropdown-col a:hover { background: none; text-decoration: underline; }
+.nav-dropdown-empty { color: rgba(255, 255, 255, 0.4); font-size: 0.9rem; }
+
+.nav-dropdown-media { position: relative; aspect-ratio: 16 / 11; background: #17181c; overflow: hidden; }
+.nav-dropdown-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.nav-dropdown-label {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 760px) {
+  .nav-dropdown-inner { grid-template-columns: 1fr 1fr; }
+  .nav-dropdown-media { display: none; }
+}
+
 .nav-links a {
   color: #fff;
   text-decoration: none;
