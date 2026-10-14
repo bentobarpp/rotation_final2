@@ -261,11 +261,15 @@ router.get("/produtos", async (req, res) => {
     const params = [];
     let where = "p.vendido = false";
     if (categoria) {
-      if (!CATEGORIAS_VALIDAS.includes(categoria)) {
+      // Aceita uma categoria só ("tenis") ou várias separadas por vírgula
+      // ("roupas,acessorios") — usado pela aba "Peças" do menu, que junta
+      // roupas e acessórios numa vitrine só.
+      const categorias = categoria.split(",").map((c) => c.trim()).filter(Boolean);
+      if (categorias.length === 0 || !categorias.every((c) => CATEGORIAS_VALIDAS.includes(c))) {
         return res.status(400).json({ success: false, message: "Categoria inválida." });
       }
-      params.push(categoria);
-      where += ` AND p.categoria = $${params.length}`;
+      params.push(categorias);
+      where += ` AND p.categoria = ANY($${params.length})`;
     }
     const { rows } = await pool.query(
       `SELECT p.id, p.nome, p.preco, p.imagem_url AS "imagemUrl", p.tamanho, p.descricao,

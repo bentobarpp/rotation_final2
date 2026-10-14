@@ -3,6 +3,7 @@ const CATEGORY_META = {
   tenis: { title: "Tênis", sub: "Sneakers raros e cobiçados, verificados antes de chegar até você." },
   roupas: { title: "Peças", sub: "Camisas, calças, casacos e tricôs autenticados." },
   acessorios: { title: "Acessórios", sub: "Bonés, bolsas, joias e outros detalhes que fecham o look." },
+  "roupas,acessorios": { title: "Peças", sub: "Roupas e acessórios autenticados — camisetas, moletons, bonés e mais." },
 };
 
 const CONDICAO_LABEL = { novo: "Novo", seminovo: "Seminovo", usado: "Peça Única" };
