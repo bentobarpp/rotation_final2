@@ -3,281 +3,113 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Upload de Tênis - Rotation</title>
-    <meta name="description" content="Venda seu tênis exclusivo" />
-    <link rel="stylesheet" href="/Css/shop.css" />
-    <link rel="stylesheet" href="/Css/toast.css" />
-    <link rel="stylesheet" href="/Css/rotation-ui.css" />
+    <title>Adicionar Peça - barpp</title>
+    <meta name="description" content="Área administrativa para adicionar peças ao catálogo da barpp." />
+    <link rel="icon" href="/Galery/logo-barpp.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/Css/barpp-ui.css" />
     <link rel="stylesheet" href="/Css/nav.css" />
-    <style>
-        body {
-            background: linear-gradient(to bottom, #26272B, #38393e 85%);
-            color: #f4f4f4;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            margin: 0;
-            padding-top: 80px;
-        }
-        .upload-container {
-            max-width: 435px;
-            margin: 45px auto 35px auto;
-            padding: 34px 26px 25px 26px;
-            background: rgba(38, 38, 38, 0.97);
-            border-radius: 17px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
-            color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .upload-container h2 {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 19px;
-            text-align: center;
-            letter-spacing: .5px;
-        }
-        .upload-container label {
-            width: 100%;
-            text-align: left;
-            font-size: 1rem;
-            margin-top: 13px;
-            margin-bottom: 5px;
-            color: #A9A9A9;
-            font-weight: 600;
-            letter-spacing: .1px;
-        }
-        .upload-container input, .upload-container select, .upload-container textarea {
-            width: 100%;
-            margin-bottom: 8px;
-            padding: 10px 12px;
-            border-radius: 9px;
-            border: none;
-            background: #222228;
-            color: #fff;
-            font-size: 1rem;
-            outline: none;
-            box-sizing: border-box;
-            transition: background .22s;
-        }
-        .upload-container input:focus,
-        .upload-container select:focus,
-        .upload-container textarea:focus {
-            background: #34343a;
-        }
-        .upload-container input[type="file"] {
-            padding: 7px 0;
-            background: none;
-        }
-        .upload-container textarea {
-            resize: vertical;
-            min-height: 65px;
-            max-height: 200px;
-        }
-        .upload-container .info {
-            display: inline;
-            color: #A9A9A9;
-            font-size: .93rem;
-        }
-        .upload-container button.buy-btn {
-            width: 100%;
-            background: linear-gradient(90deg,#434343 0%,#262626 100%);
-            color: #fff;
-            font-size: 1.13rem;
-            font-weight: 700;
-            letter-spacing: .3px;
-            border: none;
-            border-radius: 10px;
-            padding: 13px 0;
-            margin-top: 20px;
-            margin-bottom: 8px;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-            transition: background 0.3s, transform 0.2s;
-        }
-        .upload-container button.buy-btn:hover {
-            background: linear-gradient(90deg, #292929 0%, #434343 100%);
-            transform: translateY(-2px) scale(1.03);
-        }
-        .upload-img-preview {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            margin-bottom: 8px;
-        }
-        .upload-img-preview img {
-            max-width: 160px;
-            max-height: 160px;
-            border-radius: 10px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.35);
-        }
-        @media (max-width: 600px) {
-            .upload-container {
-                max-width: 95vw;
-                padding: 8vw 2vw 14vw 2vw;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="/Css/upload.css" />
 </head>
 <body>
 
-<div id="nav">
-    <img class="logo" src="/Galery/BannerRotation.png" alt="logo rotation">
-    <a href="/home.html">Home</a>
-    <a href="/shop.html">Shop</a>
-    <a href="/trocas.html">Trocas</a>
-    <input type="text" id="txtBusca" placeholder="Buscar" />
-    <a class="logout-btn" href="/index.html">Sair</a>
-    <a href="/perfil.html" class="nav-avatar" id="navAvatar" aria-label="Perfil" title="Perfil">👤</a>
-
-</div>
+<header id="nav">
+  <div class="topbar">
+    <a href="https://www.instagram.com/" target="_blank" rel="noopener">Instagram</a>
+    <span class="topbar-msg">Peças autenticadas, direto da comunidade</span>
+    <a href="https://wa.me/5547988567247" target="_blank" rel="noopener">Fale no WhatsApp</a>
+  </div>
+  <div class="nav-main">
+    <a href="/home.html" class="brand">
+      <img class="logo" src="/Galery/logo-barpp.svg" alt="barpp">
+      <span class="wordmark">barpp</span>
+    </a>
+    <nav class="nav-links">
+      <a href="/shop.html?categoria=tenis">Tênis</a>
+      <a href="/shop.html?categoria=roupas">Peças</a>
+      <a href="/shop.html?categoria=acessorios">Acessórios</a>
+      <a href="/trocas.html">Trocas</a>
+      <a href="/shop.html">Marcas</a>
+      <a href="/home.html#sobre">Sobre</a>
+    </nav>
+    <div class="nav-right">
+      <div class="nav-search">
+        <input type="text" id="txtBusca" placeholder="Buscar" />
+      </div>
+      <span id="navAuth"></span>
+    </div>
+  </div>
+</header>
 
 <div class="upload-container">
-    <h2>Venda seu Tênis</h2>
+    <h2>Adicionar Peça</h2>
+    <p class="upload-guest-note" id="restrictedNote" hidden>
+      Esta área é restrita ao administrador da barpp.
+      <a href="/login.html?next=/upload.html">Entrar com a conta admin</a>
+    </p>
     <form id="uploadForm" autocomplete="off">
-        <label for="shoeName">Nome do Tênis</label>
-        <input type="text" id="shoeName" placeholder="Ex: Nike Air Max" required />
+        <label for="shoeName">Nome da Peça</label>
+        <input type="text" id="shoeName" maxlength="100" placeholder="Ex: Nike Air Max" required />
 
-        <label for="shoePrice">Preço (R$)</label>
-        <input type="number" min="0" step="0.01" id="shoePrice" placeholder="Ex: 499.90" required />
+        <div class="field-row">
+          <div>
+            <label for="shoeCategoria">Categoria</label>
+            <select id="shoeCategoria" required>
+                <option value="tenis">Tênis</option>
+                <option value="roupas">Roupas</option>
+                <option value="acessorios">Acessórios</option>
+            </select>
+          </div>
+          <div>
+            <label for="shoeCondicao">Condição</label>
+            <select id="shoeCondicao" required>
+                <option value="novo">Novo</option>
+                <option value="seminovo">Seminovo</option>
+                <option value="usado" selected>Usado</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div>
+            <label for="shoeMarca">Marca</label>
+            <input type="text" id="shoeMarca" maxlength="60" placeholder="Ex: Nike" />
+          </div>
+          <div>
+            <label for="shoePrice">Preço (R$)</label>
+            <input type="number" min="0" step="0.01" id="shoePrice" placeholder="Ex: 499.90" required />
+          </div>
+        </div>
 
         <label for="shoeSize">Tamanho</label>
-        <select id="shoeSize" required>
-            <option value="" disabled selected>Escolha um tamanho</option>
-            <option value="30">30</option><option value="31">31</option>
-            <option value="32">32</option><option value="33">33</option>
-            <option value="34">34</option><option value="35">35</option>
-            <option value="36">36</option><option value="37">37</option>
-            <option value="38">38</option><option value="39">39</option>
-            <option value="40">40</option><option value="41">41</option>
-            <option value="42">42</option><option value="43">43</option>
-            <option value="44">44</option><option value="45">45</option>
-            <option value="46">46</option>
-        </select>
+        <input type="text" id="shoeSize" maxlength="10" placeholder="Ex: 42 ou M" required />
 
         <label for="shoeDescription">Descrição</label>
-        <textarea id="shoeDescription" maxlength="400" placeholder="Descreva o produto, estado de uso, detalhes, etc." required></textarea>
+        <textarea id="shoeDescription" maxlength="600" placeholder="Descreva o produto, estado de uso, detalhes, etc." required></textarea>
 
-        <label for="shoeMainImage">Foto do Tênis</label>
+        <label for="shoeMainImage">Foto da Peça</label>
         <input type="file" id="shoeMainImage" accept="image/png,image/jpeg,image/webp,image/gif" required />
         <div id="imgPreview" class="upload-img-preview"></div>
 
-        <button type="submit" class="buy-btn">Adicionar Tênis</button>
+        <button type="submit" class="btn" style="width:100%;margin-top:18px;">Adicionar Peça</button>
     </form>
 </div>
 
 <footer class="rodape">
     <p class="rodape-texto">
         Encontrou algum problema? Entre em contato através do e-mail
-        <a href="mailto:rotationsup@gmail.com.br">rotationsup@gmail.com.br</a>
+        <a href="mailto:barppsup@gmail.com">barppsup@gmail.com</a>
     </p>
 </footer>
 
 <script src="/Js/toast.js"></script>
+<script src="/Js/barpp.js"></script>
 <script src="/Js/image-check.js"></script>
 <script src="/Js/nav-search.js"></script>
-<script src="/Js/avatar.js"></script>
-<script>
-const shoeMainImageInput = document.getElementById("shoeMainImage");
-const imgPreview = document.getElementById("imgPreview");
-let shoeImageBase64 = null;
-
-shoeMainImageInput.addEventListener("change", function () {
-    imgPreview.innerHTML = "";
-    shoeImageBase64 = null;
-    const file = this.files[0];
-    if (!file) return;
-    if (!file.type.startsWith("image/")) {
-        toast("Esse arquivo não é uma imagem compatível. Envie uma foto em JPG, PNG ou WEBP.", "error");
-        this.value = "";
-        return;
-    }
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-        const dataUrl = e.target.result;
-        const ok = await testarImagem(dataUrl);
-        if (!ok) {
-            toast("Não foi possível ler essa imagem (formatos RAW como .DNG não são suportados). Envie uma foto em JPG, PNG ou WEBP.", "error");
-            shoeMainImageInput.value = "";
-            return;
-        }
-        shoeImageBase64 = dataUrl;
-        const img = document.createElement("img");
-        img.src = dataUrl;
-        imgPreview.appendChild(img);
-    };
-    reader.readAsDataURL(file);
-});
-
-document.getElementById("uploadForm").addEventListener("submit", function (event) {
-    event.preventDefault();
-
-    const submitBtn = event.target.querySelector('button[type="submit"]');
-    var shoeName = document.getElementById("shoeName").value.trim();
-    var shoePrice = parseFloat(document.getElementById("shoePrice").value.trim()) || 0;
-    var shoeSize = document.getElementById("shoeSize").value;
-    var shoeDescription = document.getElementById("shoeDescription").value.trim();
-
-    if (!shoeName || !shoePrice || !shoeSize || !shoeDescription || !shoeImageBase64) {
-        toast("Preencha todos os campos obrigatórios, incluindo uma foto válida.", "error");
-        return;
-    }
-
-    const usuarioString = localStorage.getItem("usuarioLogado");
-    if (!usuarioString) {
-        toast("Você precisa estar logado para vender um tênis. Redirecionando...", "error");
-        setTimeout(() => window.location.href = '/index.html', 1200);
-        return;
-    }
-
-    const usuario = JSON.parse(usuarioString);
-    if (!usuario || !usuario.id) {
-        toast("Dados do usuário inválidos. Faça login novamente.", "error");
-        setTimeout(() => window.location.href = '/index.html', 1200);
-        return;
-    }
-
-    submitBtn.disabled = true;
-    submitBtn.textContent = "Enviando...";
-
-    const shoeData = {
-        nome: shoeName,
-        preco: shoePrice,
-        tamanho: shoeSize,
-        descricao: shoeDescription,
-        imagemUrl: shoeImageBase64,
-    };
-
-    const token = localStorage.getItem("token");
-
-    fetch('/api/produtos', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify(shoeData)
-    })
-    .then(response => {
-        if (response.ok) {
-            toast('Tênis adicionado com sucesso!', 'success');
-            document.getElementById("uploadForm").reset();
-            imgPreview.innerHTML = "";
-            shoeImageBase64 = null;
-            setTimeout(() => window.location.href = '/shop.html', 900);
-        } else {
-            return response.json().then(err => {
-                throw new Error(err.message || 'Erro desconhecido ao enviar o tênis.');
-            });
-        }
-    })
-    .catch(error => {
-        console.error('Erro ao enviar o tênis:', error);
-        toast('Erro ao enviar o tênis: ' + error.message, 'error');
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Adicionar Tênis";
-    });
-});
-</script>
+<script src="/Js/nav-auth.js"></script>
+<script src="/Js/upload.js"></script>
 
 </body>
 </html>

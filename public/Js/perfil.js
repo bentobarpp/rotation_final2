@@ -1,7 +1,8 @@
-// Protege a página se não estiver logado
+// Protege a página se não estiver logado — ver perfil é uma ação de conta,
+// então aqui (diferente das páginas de navegação livre) exigimos login.
 const user = JSON.parse(localStorage.getItem("usuarioLogado"));
-if (!user) {
-  window.location.href = "/index.html";
+if (!user || !localStorage.getItem("token")) {
+  window.location.href = "/login.html?next=" + encodeURIComponent("/perfil.html");
 }
 
 function validarSenha(senha) {
@@ -38,6 +39,9 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("email").value = data.user.email || "";
         fotoAtual = data.user.foto || null;
         mostrarAvatar(fotoAtual, data.user.nome);
+        localStorage.setItem("usuarioLogado", JSON.stringify({
+          id: user.id, nome: data.user.nome, email: data.user.email, foto: fotoAtual, isAdmin: !!data.user.isAdmin,
+        }));
       }
     })
     .catch(() => {});
@@ -106,7 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .then((data) => {
         toast(data.message, data.success ? "success" : "error");
         if (data.success) {
-          localStorage.setItem("usuarioLogado", JSON.stringify({ id: user.id, nome, email, foto: data.foto || null }));
+          localStorage.setItem("usuarioLogado", JSON.stringify({ id: user.id, nome, email, foto: data.foto || null, isAdmin: !!user.isAdmin }));
           const navAvatar = document.getElementById("navAvatar");
           if (navAvatar) {
             if (data.foto) {
@@ -138,7 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
           toast(data.message, data.success ? "success" : "error");
           localStorage.removeItem("usuarioLogado");
           localStorage.removeItem("token");
-          setTimeout(() => window.location.href = "/index.html", 900);
+          setTimeout(() => window.location.href = "/login.html", 900);
         })
         .catch(() => toast("Erro ao deletar a conta.", "error"));
     }

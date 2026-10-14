@@ -1,36 +1,42 @@
-// Seleciona o contêiner e as imagens
-const container = document.querySelector('.container');
-const images = Array.from(document.querySelectorAll('.container img'));
-const totalImages = images.length;
-let currentIndex = 0;
-let imageWidth = images[0].clientWidth; // Captura a largura da primeira imagem
+const slide = document.getElementById("carousel-slide");
+let allItems = [];
 
-// Função para atualizar o carrossel
-function updateCarousel() {
-    container.style.transform = `translateX(${-currentIndex * imageWidth}px)`; // Aplica a transformação
+slide.innerHTML = '<div class="carousel-skeleton">' + '<div class="skeleton"></div>'.repeat(4) + "</div>";
+
+async function carregarDestaques() {
+  try {
+    const data = await apiFetch("/api/produtos");
+    allItems = (data.results || []).map((p) => ({ img: p.imagemUrl, title: p.nome, id: p.id }));
+  } catch (err) {
+    console.error("Erro ao carregar produtos:", err);
+    allItems = [];
+  }
+  renderCarousel();
 }
 
-// Função para ir para a próxima imagem
-function nextImage() {
-    currentIndex = (currentIndex + 1) % totalImages; // Se chegar à última imagem, volta para a primeira
-    updateCarousel();
+function renderCarousel() {
+  if (allItems.length === 0) {
+    slide.innerHTML = "";
+    document.querySelector(".carousel-container").innerHTML = `
+      <div class="empty-state">
+        <span class="empty-emoji">🛍️</span>
+        <p>Ainda não há peças cadastradas. <a href="/upload.html">Seja o primeiro a vender!</a></p>
+      </div>`;
+    return;
+  }
+  slide.style.setProperty("--num-items", allItems.length);
+  const itemsToRender = [...allItems, ...allItems];
+  slide.innerHTML = "";
+  itemsToRender.forEach((item) => {
+    const el = document.createElement("div");
+    el.className = "carousel-item";
+    el.innerHTML = `
+      <a href="/detalhes.html?id=${encodeURIComponent(item.id)}" style="text-decoration:none; color:inherit;">
+        <img src="${escapeHtml(item.img)}" alt="${escapeHtml(item.title)}">
+        <div class="title">${escapeHtml(item.title)}</div>
+      </a>`;
+    slide.appendChild(el);
+  });
 }
 
-// Função para ir para a imagem anterior
-function prevImage() {
-    currentIndex = (currentIndex - 1 + totalImages) % totalImages; // Se estiver na primeira, volta para a última
-    updateCarousel();
-}
-
-// Adiciona eventos de clique para os botões "Next" e "Prev"
-document.getElementById('next').addEventListener('click', nextImage);
-document.getElementById('prev').addEventListener('click', prevImage);
-
-// Carrossel automático com intervalo de 3 segundos
-const autoSlideInterval = setInterval(nextImage, 3000);
-
-// Ajusta o carrossel ao redimensionar a janela
-window.addEventListener('resize', () => {
-    imageWidth = images[0].clientWidth; // Atualiza a largura da imagem
-    updateCarousel(); // Recalcula a posição do carrossel
-});
+carregarDestaques();

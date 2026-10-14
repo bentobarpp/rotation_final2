@@ -1,11 +1,13 @@
 {
-  "name": "rotation",
+  "name": "barpp",
   "version": "1.0.0",
   "private": true,
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "init-db": "node scripts/init-db.js"
+    "init-db": "node scripts/init-db.js",
+    "migrate-categorias": "node scripts/migrate-categorias.js",
+    "migrate-admin": "node scripts/migrate-admin.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

@@ -3,13 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Criar Conta - Rotation</title>
-  <meta name="description" content="Crie sua conta na Rotation.">
+  <title>Criar Conta - barpp</title>
+  <meta name="description" content="Crie sua conta na barpp.">
+  <link rel="icon" href="/Galery/logo-barpp.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/Css/barpp-ui.css">
   <link rel="stylesheet" href="/Css/auth.css">
 </head>
 <body>
 
-  <img class="auth-logo" src="/Galery/BannerRotation.png" alt="Logo Rotation">
+  <img class="auth-logo" src="/Galery/logo-barpp.svg" alt="Logo barpp">
 
   <div class="auth-card">
     <form id="signInForm">
@@ -17,17 +22,17 @@
 
       <div class="auth-field">
         <label for="nome">Nome</label>
-        <input type="text" id="nome" placeholder="Como podemos te chamar?" required>
+        <input type="text" id="nome" placeholder="Como podemos te chamar?" autocomplete="name" required>
       </div>
 
       <div class="auth-field">
         <label for="email">E-mail</label>
-        <input type="email" id="email" placeholder="voce@email.com" required>
+        <input type="email" id="email" placeholder="voce@email.com" autocomplete="email" required>
       </div>
 
       <div class="auth-field">
         <label for="senha">Senha</label>
-        <input type="password" id="senha" placeholder="Mín. 6 caracteres + 1 especial" minlength="6" required>
+        <input type="password" id="senha" placeholder="Mín. 6 caracteres + 1 especial" minlength="6" autocomplete="new-password" required>
         <small class="auth-hint">Precisa ter no mínimo 6 caracteres e 1 caractere especial (ex: ! @ # $ % *)</small>
       </div>
 
@@ -36,7 +41,10 @@
       <p class="auth-message" id="msg"></p>
 
       <p class="auth-switch">
-        Já tem uma conta? <a href="/index.html">Entrar</a>
+        Já tem uma conta? <a href="/login.html">Entrar</a>
+      </p>
+      <p class="auth-guest">
+        <a href="/home.html">Continuar sem conta →</a>
       </p>
     </form>
   </div>

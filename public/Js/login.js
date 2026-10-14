@@ -1,3 +1,16 @@
+document.addEventListener("DOMContentLoaded", () => {
+  localStorage.removeItem("usuarioLogado");
+  localStorage.removeItem("token");
+
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("cadastro") === "sucesso") {
+    const msg = document.getElementById("errorMessage");
+    msg.classList.remove("error");
+    msg.classList.add("success");
+    msg.textContent = "Conta criada com sucesso! Faça login para continuar.";
+  }
+});
+
 function validateForm(event) {
   event.preventDefault();
 
@@ -27,9 +40,11 @@ function validateForm(event) {
             id: data.user.id,
             nome: data.user.nome,
             foto: data.user.foto || null,
+            isAdmin: !!data.user.isAdmin,
           })
         );
-        window.location.href = "/home.html";
+        const next = new URLSearchParams(window.location.search).get("next");
+        window.location.href = next && next.startsWith("/") ? next : "/home.html";
       } else {
         errorEl.textContent = data.message || "Usuário ou senha inválidos.";
         btn.disabled = false;
@@ -43,7 +58,6 @@ function validateForm(event) {
     });
 }
 
-// Faz o form executar validateForm ao enviar
 document
   .getElementById("loginForm")
   .addEventListener("submit", validateForm);

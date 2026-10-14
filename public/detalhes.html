@@ -4,299 +4,63 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Detalhes do Tênis - Rotation</title>
+  <title>Detalhes da Peça - barpp</title>
   <meta name="description" content="Detalhes do produto" />
-  <link rel="stylesheet" href="/Css/shop.css" />
-  <link rel="stylesheet" href="/Css/rotation-ui.css" />
+  <link rel="icon" href="/Galery/logo-barpp.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/Css/barpp-ui.css" />
   <link rel="stylesheet" href="/Css/nav.css" />
-  <style>
-    body {
-      background: linear-gradient(to bottom, #26272B, #38393e 85%);
-      color: #f4f4f4;
-      font-family: 'Segoe UI', Arial, sans-serif;
-      margin: 0;
-      padding-top: 80px;
-    }
-
-    .container {
-      max-width: 900px;
-      margin: 30px auto;
-      padding: 15px 24px 30px 24px;
-      background: rgba(38, 38, 38, 0.9);
-      border-radius: 15px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-      color: #f4f4f4;
-      text-align: center;
-    }
-
-    .product-title {
-      margin-bottom: 26px;
-      font-size: 2.5rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-    }
-
-    .image-navigation {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-bottom: 12px;
-      gap: 15px;
-    }
-
-    .image-navigation button {
-      background-color: #292929;
-      color: white;
-      border: none;
-      padding: 10px 14px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 1.2rem;
-      font-weight: 700;
-      transition: background-color 0.3s ease;
-      user-select: none;
-      min-width: 90px;
-      box-shadow: 0 3px 10px rgb(0 0 0 / 0.3);
-    }
-
-    .image-navigation button:hover {
-      background-color: #434343;
-    }
-
-    .images-main {
-      max-width: 420px;
-      width: 100%;
-      max-height: 400px;
-      object-fit: contain;
-      border-radius: 15px;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-      margin: 0 auto 20px auto;
-      display: block;
-      user-select: none;
-    }
-
-    .images-secondary {
-      display: flex;
-      justify-content: center;
-      margin-top: 18px;
-      gap: 12px;
-    }
-
-    .images-secondary img {
-      width: 85px;
-      height: 85px;
-      object-fit: cover;
-      border-radius: 10px;
-      cursor: pointer;
-      border: 3px solid transparent;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-      transition: border-color 0.25s ease;
-      user-select: none;
-    }
-
-    .images-secondary img.selected {
-      border-color: #6c6efe;
-      box-shadow: 0 4px 15px rgba(108, 110, 254, 0.8);
-    }
-
-    .product-price-size {
-      font-weight: 700;
-      margin-top: 28px;
-      font-size: 1.3rem;
-      color: #fff;
-      user-select: none;
-    }
-
-    .product-info {
-      margin-top: 22px;
-      font-size: 1.1rem;
-      max-width: 680px;
-      margin-left: auto;
-      margin-right: auto;
-      line-height: 1.5em;
-      color: #e1e3e7;
-      text-align: justify;
-      user-select: text;
-    }
-
-    .buy-btn {
-      margin: 35px auto 0 auto;
-      background: linear-gradient(90deg, #6c6efe 0%, #3f42dc 85%);
-      color: white;
-      padding: 14px 38px;
-      font-size: 1.2rem;
-      font-weight: 700;
-      border: none;
-      border-radius: 15px;
-      box-shadow: 0 6px 20px rgba(108, 110, 254, 0.6);
-      cursor: pointer;
-      display: inline-block;
-      transition: background 0.4s, box-shadow 0.4s;
-      text-decoration: none;
-      user-select: none;
-      min-width: 230px;
-    }
-
-    .buy-btn:hover {
-      background: linear-gradient(90deg, #4f52bb 0%, #2526a3 100%);
-      box-shadow: 0 8px 30px rgba(69, 73, 194, 0.85);
-      transform: translateY(-3px) scale(1.04);
-    }
-
-    #message {
-      margin-top: 26px;
-      font-weight: 700;
-      font-size: 1.1rem;
-      color: #94a1ff;
-      min-height: 30px;
-      user-select: none;
-    }
-
-    @media (max-width: 520px) {
-      .container {
-        padding: 20px 15px 30px 15px;
-      }
-
-      .product-title {
-        font-size: 1.9rem;
-      }
-
-      .image-navigation button {
-        min-width: 75px;
-        font-size: 1rem;
-        padding: 8px 10px;
-      }
-
-      .images-secondary img {
-        width: 65px;
-        height: 65px;
-      }
-
-      .buy-btn {
-        min-width: 170px;
-        font-size: 1rem;
-        padding: 11px 28px;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="/Css/detalhes.css" />
 </head>
 
 <body>
-  <div id="nav">
-    <img class="logo" src="/Galery/BannerRotation.png" alt="logo rotation" />
-    <a href="/home.html">Home</a>
-    <a href="/shop.html">Shop</a>
-    <a href="/trocas.html">Trocas</a>
-    <input type="text" id="txtBusca" placeholder="Buscar" />
-    <a class="logout-btn" href="/index.html">Sair</a>
-    <a href="/perfil.html" class="nav-avatar" id="navAvatar" aria-label="Perfil" title="Perfil">👤</a>
-
-  </div>
+  <header id="nav">
+    <div class="topbar">
+      <a href="https://www.instagram.com/" target="_blank" rel="noopener">Instagram</a>
+      <span class="topbar-msg">Peças autenticadas, direto da comunidade</span>
+      <a href="https://wa.me/5547988567247" target="_blank" rel="noopener">Fale no WhatsApp</a>
+    </div>
+    <div class="nav-main">
+      <a href="/home.html" class="brand">
+        <img class="logo" src="/Galery/logo-barpp.svg" alt="barpp">
+        <span class="wordmark">barpp</span>
+      </a>
+      <nav class="nav-links">
+        <a href="/shop.html?categoria=tenis">Tênis</a>
+        <a href="/shop.html?categoria=roupas">Peças</a>
+        <a href="/shop.html?categoria=acessorios">Acessórios</a>
+        <a href="/trocas.html">Trocas</a>
+        <a href="/shop.html">Marcas</a>
+        <a href="/home.html#sobre">Sobre</a>
+      </nav>
+      <div class="nav-right">
+        <div class="nav-search">
+          <input type="text" id="txtBusca" placeholder="Buscar" />
+        </div>
+        <span id="navAuth"></span>
+      </div>
+    </div>
+  </header>
 
   <div class="container" id="productDetails">
     <div class="skeleton" style="height:42px;width:60%;margin:0 auto 26px;"></div>
-    <div class="skeleton" style="height:340px;width:340px;margin:0 auto 20px;border-radius:15px;"></div>
+    <div class="skeleton" style="height:340px;width:340px;margin:0 auto 20px;"></div>
     <div class="skeleton" style="height:20px;width:40%;margin:0 auto;"></div>
   </div>
 
   <footer class="rodape">
     <p class="rodape-texto">Encontrou algum problema? Entre em contato através do e-mail
-      <a href="mailto:rotationsup@gmail.com.br">rotationsup@gmail.com.br</a>
+      <a href="mailto:barppsup@gmail.com">barppsup@gmail.com</a>
     </p>
   </footer>
 
+  <script src="/Js/toast.js"></script>
+  <script src="/Js/barpp.js"></script>
   <script src="/Js/nav-search.js"></script>
-<script src="/Js/avatar.js"></script>
-  <script>
-    function getQueryParam(param) {
-      const urlSearchParams = new URLSearchParams(window.location.search);
-      return urlSearchParams.get(param);
-    }
-
-    const productId = getQueryParam("id");
-
-    function displayProduct(product) {
-      const container = document.getElementById("productDetails");
-      const hasMultipleImages = product.images.length > 1;
-      container.innerHTML = `
-        <h1 class="product-title reveal visible">${product.name}</h1>
-        <div class="image-navigation">
-          ${hasMultipleImages ? `<button id="prevImage" type="button" aria-label="Imagem anterior">&laquo; Anterior</button>` : ''}
-          <img src="${product.images[0]}" alt="${product.name}" class="images-main" id="mainImage" />
-          ${hasMultipleImages ? `<button id="nextImage" type="button" aria-label="Próxima imagem">Próximo &raquo;</button>` : ''}
-        </div>
-        ${hasMultipleImages ? `
-        <div class="images-secondary" id="secondaryImages">
-          ${product.images
-            .map(
-              (img, idx) => `<img src="${img}" alt="Imagem ${idx + 1}" data-index="${idx}" />`
-            )
-            .join("")}
-        </div>` : ''}
-        <p class="product-price-size">Preço: R$ ${product.price.toFixed(2).replace('.', ',')} | Tamanho: ${product.size}</p>
-        <p class="product-info">${product.description}</p>
-        <a href="compra.html?id=${encodeURIComponent(productId)}" class="buy-btn" id="btnComprar">Comprar Agora</a>
-        <div id="message" role="alert" aria-live="polite"></div>
-      `;
-
-      let currentIndex = 0;
-      const mainImage = document.getElementById("mainImage");
-      const secondaryImages = document.querySelectorAll("#secondaryImages img");
-      const prevBtn = document.getElementById("prevImage");
-      const nextBtn = document.getElementById("nextImage");
-
-      if (!hasMultipleImages) return;
-
-      function updateMainImage(i) {
-        if (i < 0) i = product.images.length - 1;
-        if (i >= product.images.length) i = 0;
-        currentIndex = i;
-        mainImage.src = product.images[i];
-        secondaryImages.forEach(img => img.classList.remove("selected"));
-        if (secondaryImages[i]) {
-          secondaryImages[i].classList.add("selected");
-        }
-      }
-
-      prevBtn.addEventListener('click', () => updateMainImage(currentIndex - 1));
-      nextBtn.addEventListener('click', () => updateMainImage(currentIndex + 1));
-      secondaryImages.forEach(img => {
-        img.addEventListener('click', () => {
-          updateMainImage(parseInt(img.dataset.index));
-        });
-      });
-
-      updateMainImage(0);
-    }
-
-    async function carregarProduto() {
-      if (!productId) {
-        document.getElementById('productDetails').innerHTML = '<div class="empty-state"><span class="empty-emoji">🚫</span><p>Produto não encontrado. <a href="/shop.html">Voltar para a Shop</a></p></div>';
-        return;
-      }
-      try {
-        const res = await fetch(`/api/produtos/${encodeURIComponent(productId)}`);
-        const data = await res.json();
-        if (!data.success) {
-          document.getElementById('productDetails').innerHTML = '<div class="empty-state"><span class="empty-emoji">🚫</span><p>Produto não encontrado. <a href="/shop.html">Voltar para a Shop</a></p></div>';
-          return;
-        }
-        const p = data.produto;
-        displayProduct({
-          name: p.nome,
-          images: [p.imagemUrl],
-          price: parseFloat(p.preco) || 0,
-          size: p.tamanho || "N/D",
-          description: p.descricao || "Sem descrição disponível."
-        });
-      } catch (err) {
-        console.error(err);
-        document.getElementById('productDetails').innerHTML = '<div class="empty-state"><span class="empty-emoji">🚫</span><p>Produto não encontrado. <a href="/shop.html">Voltar para a Shop</a></p></div>';
-      }
-    }
-
-    carregarProduto();
-  </script>
+  <script src="/Js/nav-auth.js"></script>
+  <script src="/Js/detalhes.js"></script>
 </body>
 
 </html>

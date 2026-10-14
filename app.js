@@ -12,10 +12,32 @@ if (!JWT_SECRET) {
   throw new Error("JWT_SECRET não configurado.");
 }
 
-// A maioria das páginas usa <script>/<style> inline, então um CSP restrito
-// quebraria o site inteiro sem uma reescrita grande; mantemos os outros
-// cabeçalhos de segurança do helmet (HSTS, no-sniff, referrer-policy, etc).
-app.use(helmet({ contentSecurityPolicy: false }));
+// Todo <script>/<style> inline foi removido do front-end (ver public/), então
+// dá pra manter um CSP restrito: só scripts/estilos do próprio site, sem
+// inline e sem eval. Google Fonts é a única origem externa permitida.
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'"],
+        // script-src fica estrito (sem inline, sem eval) — é o que impede
+        // XSS de executar código. style-src permite inline porque todo
+        // style="" do site é string fixa escrita pelo dev (nunca interpola
+        // dado de usuário), então o risco de CSS-injection aqui é baixo.
+        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+        fontSrc: ["'self'", "https://fonts.gstatic.com"],
+        imgSrc: ["'self'", "data:"],
+        connectSrc: ["'self'"],
+        objectSrc: ["'none'"],
+        baseUri: ["'self'"],
+        formAction: ["'self'"],
+        frameAncestors: ["'none'"],
+        upgradeInsecureRequests: [],
+      },
+    },
+  })
+);
 
 const allowedOrigins = [
   process.env.SITE_URL,
@@ -39,6 +61,17 @@ const authLimiter = rateLimit({
   message: { success: false, message: "Muitas tentativas. Tente novamente em alguns minutos." },
 });
 
+// Limite mais permissivo para ações de escrita autenticadas (publicar
+// peça/troca, mandar mensagem, criar cupom) — evita spam/abuso sem
+// atrapalhar uso normal.
+const writeLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 60,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: "Muitas requisições. Tente novamente em alguns minutos." },
+});
+
 app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true }));
 
@@ -56,6 +89,16 @@ function authMiddleware(req, res, next) {
   }
 }
 
+// Só a conta admin (sinalizada em usuarios.is_admin, carregada no token no
+// login) pode adicionar/remover peças do catálogo — o site agora é uma loja
+// curada por uma pessoa só, não um marketplace aberto.
+function adminOnly(req, res, next) {
+  if (!req.usuario || !req.usuario.isAdmin) {
+    return res.status(403).json({ success: false, message: "Apenas o administrador pode gerenciar peças." });
+  }
+  next();
+}
+
 const router = express.Router();
 
 const SPECIAL_CHAR_REGEX = /[^A-Za-z0-9]/;
@@ -65,6 +108,30 @@ function senhaInvalida(senha) {
   return null;
 }
 
+// --- Validação de entrada compartilhada ---
+// Mesmo com queries parametrizadas (sem risco de SQL injection), limitamos
+// tamanho/formato dos campos vindos do cliente: evita payloads gigantes no
+// banco e dados que quebrariam a UI.
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const CATEGORIAS_VALIDAS = ["tenis", "roupas", "acessorios"];
+const CONDICOES_VALIDAS = ["novo", "seminovo", "usado"];
+
+function textoInvalido(valor, { min = 1, max = 255, label = "Campo" } = {}) {
+  if (typeof valor !== "string" || valor.trim().length < min) return `${label} precisa ter pelo menos ${min} caractere(s).`;
+  if (valor.length > max) return `${label} pode ter no máximo ${max} caracteres.`;
+  return null;
+}
+
+function emailInvalido(email) {
+  if (!email) return null; // e-mail é opcional no cadastro
+  if (typeof email !== "string" || email.length > 160 || !EMAIL_REGEX.test(email)) return "E-mail inválido.";
+  return null;
+}
+
+function isDataUrlImagem(valor) {
+  return typeof valor === "string" && /^data:image\/(png|jpeg|jpg|webp|gif);base64,/.test(valor);
+}
+
 // ---------- AUTENTICAÇÃO ----------
 
 router.post("/sign-in", authLimiter, async (req, res) => {
@@ -72,6 +139,10 @@ router.post("/sign-in", authLimiter, async (req, res) => {
   if (!nome || !senha) {
     return res.status(400).json({ success: false, message: "Nome e senha são obrigatórios." });
   }
+  const erroNome = textoInvalido(nome, { min: 3, max: 40, label: "Nome" });
+  if (erroNome) return res.status(400).json({ success: false, message: erroNome });
+  const erroEmail = emailInvalido(email);
+  if (erroEmail) return res.status(400).json({ success: false, message: erroEmail });
   const erroSenha = senhaInvalida(senha);
   if (erroSenha) {
     return res.status(400).json({ success: false, message: erroSenha });
@@ -80,7 +151,7 @@ router.post("/sign-in", authLimiter, async (req, res) => {
     const senha_hash = await bcrypt.hash(senha, 10);
     const { rows } = await pool.query(
       "INSERT INTO usuarios (nome, email, senha_hash) VALUES ($1,$2,$3) RETURNING id, nome, email",
-      [nome, email || null, senha_hash]
+      [nome.trim(), email ? email.trim() : null, senha_hash]
     );
     res.status(201).json({ success: true, message: "Usuário criado!", user: rows[0] });
   } catch (err) {
@@ -106,12 +177,13 @@ router.post("/login", authLimiter, async (req, res) => {
     if (!user || !(await bcrypt.compare(password, user.senha_hash))) {
       return res.status(401).json({ success: false, message: "Usuário ou senha incorretos." });
     }
-    const token = jwt.sign({ usuario_id: user.id, nome: user.nome }, JWT_SECRET, { expiresIn: "2h" });
+    const isAdmin = !!user.is_admin;
+    const token = jwt.sign({ usuario_id: user.id, nome: user.nome, isAdmin }, JWT_SECRET, { expiresIn: "2h" });
     res.json({
       success: true,
       message: "Login OK",
       token,
-      user: { id: user.id, nome: user.nome, email: user.email, foto: user.foto_url },
+      user: { id: user.id, nome: user.nome, email: user.email, foto: user.foto_url, isAdmin },
     });
   } catch (err) {
     console.error(err);
@@ -122,7 +194,7 @@ router.post("/login", authLimiter, async (req, res) => {
 router.get("/me", authMiddleware, async (req, res) => {
   try {
     const { rows } = await pool.query(
-      "SELECT id, nome, email, foto_url AS foto FROM usuarios WHERE id = $1",
+      "SELECT id, nome, email, foto_url AS foto, is_admin AS \"isAdmin\" FROM usuarios WHERE id = $1",
       [req.usuario.usuario_id]
     );
     if (rows.length === 0) return res.status(404).json({ success: false, message: "Usuário não encontrado." });
@@ -138,6 +210,10 @@ router.put("/update-user", authMiddleware, async (req, res) => {
   if (req.usuario.usuario_id !== Number(req.body.id)) {
     return res.status(403).json({ success: false, message: "Não autorizado." });
   }
+  const erroNome = textoInvalido(nome, { min: 3, max: 40, label: "Nome" });
+  if (erroNome) return res.status(400).json({ success: false, message: erroNome });
+  const erroEmail = emailInvalido(email);
+  if (erroEmail) return res.status(400).json({ success: false, message: erroEmail });
   if (senha) {
     const erroSenha = senhaInvalida(senha);
     if (erroSenha) {
@@ -182,11 +258,23 @@ router.delete("/delete-user/:id", authMiddleware, async (req, res) => {
 
 router.get("/produtos", async (req, res) => {
   try {
+    const { categoria } = req.query;
+    const params = [];
+    let where = "p.vendido = false";
+    if (categoria) {
+      if (!CATEGORIAS_VALIDAS.includes(categoria)) {
+        return res.status(400).json({ success: false, message: "Categoria inválida." });
+      }
+      params.push(categoria);
+      where += ` AND p.categoria = $${params.length}`;
+    }
     const { rows } = await pool.query(
       `SELECT p.id, p.nome, p.preco, p.imagem_url AS "imagemUrl", p.tamanho, p.descricao,
+              p.categoria, p.marca, p.condicao, p.criado_em AS "criadoEm",
               p.usuario_id AS "usuarioId", u.nome AS "vendedorNome"
        FROM produtos p LEFT JOIN usuarios u ON u.id = p.usuario_id
-       WHERE p.vendido = false ORDER BY p.criado_em DESC`
+       WHERE ${where} ORDER BY p.criado_em DESC`,
+      params
     );
     res.json({ success: true, results: rows });
   } catch (err) {
@@ -198,7 +286,8 @@ router.get("/produtos", async (req, res) => {
 router.get("/produtos/:id", async (req, res) => {
   try {
     const { rows } = await pool.query(
-      `SELECT id, nome, preco, imagem_url AS "imagemUrl", tamanho, descricao, usuario_id AS "usuarioId"
+      `SELECT id, nome, preco, imagem_url AS "imagemUrl", tamanho, descricao,
+              categoria, marca, condicao, usuario_id AS "usuarioId"
        FROM produtos WHERE id = $1`,
       [req.params.id]
     );
@@ -210,32 +299,50 @@ router.get("/produtos/:id", async (req, res) => {
   }
 });
 
-router.post("/produtos", authMiddleware, async (req, res) => {
-  const { nome, preco, imagemUrl, tamanho, descricao } = req.body;
+router.post("/produtos", authMiddleware, adminOnly, writeLimiter, async (req, res) => {
+  const { nome, preco, imagemUrl, tamanho, descricao, categoria, marca, condicao } = req.body;
   if (!nome || !preco || !imagemUrl) {
     return res.status(400).json({ success: false, message: "Campos obrigatórios: nome, preço e imagem." });
   }
+  const erroNome = textoInvalido(nome, { min: 2, max: 100, label: "Nome" });
+  if (erroNome) return res.status(400).json({ success: false, message: erroNome });
+  if (descricao) {
+    const erroDesc = textoInvalido(descricao, { min: 1, max: 2000, label: "Descrição" });
+    if (erroDesc) return res.status(400).json({ success: false, message: erroDesc });
+  }
+  if (tamanho && (typeof tamanho !== "string" || tamanho.length > 10)) {
+    return res.status(400).json({ success: false, message: "Tamanho inválido." });
+  }
+  if (marca && (typeof marca !== "string" || marca.length > 60)) {
+    return res.status(400).json({ success: false, message: "Marca inválida." });
+  }
+  const precoNum = Number(preco);
+  if (!Number.isFinite(precoNum) || precoNum <= 0 || precoNum > 1000000) {
+    return res.status(400).json({ success: false, message: "Preço inválido." });
+  }
+  if (!isDataUrlImagem(imagemUrl)) {
+    return res.status(400).json({ success: false, message: "Imagem inválida." });
+  }
+  const categoriaFinal = categoria && CATEGORIAS_VALIDAS.includes(categoria) ? categoria : "tenis";
+  const condicaoFinal = condicao && CONDICOES_VALIDAS.includes(condicao) ? condicao : "usado";
   try {
     const { rows } = await pool.query(
-      `INSERT INTO produtos (nome, preco, imagem_url, tamanho, descricao, usuario_id)
-       VALUES ($1,$2,$3,$4,$5,$6)
-       RETURNING id, nome, preco, imagem_url AS "imagemUrl", tamanho, descricao, usuario_id AS "usuarioId"`,
-      [nome, preco, imagemUrl, tamanho || null, descricao || null, req.usuario.usuario_id]
+      `INSERT INTO produtos (nome, preco, imagem_url, tamanho, descricao, categoria, marca, condicao, usuario_id)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+       RETURNING id, nome, preco, imagem_url AS "imagemUrl", tamanho, descricao, categoria, marca, condicao, usuario_id AS "usuarioId"`,
+      [nome.trim(), precoNum, imagemUrl, tamanho || null, descricao || null, categoriaFinal, marca ? marca.trim() : null, condicaoFinal, req.usuario.usuario_id]
     );
-    res.status(201).json({ success: true, message: "Tênis criado com sucesso!", produto: rows[0] });
+    res.status(201).json({ success: true, message: "Peça criada com sucesso!", produto: rows[0] });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ success: false, message: "Erro ao criar tênis." });
+    res.status(500).json({ success: false, message: "Erro ao criar peça." });
   }
 });
 
-router.put("/produtos/:id/vendido", authMiddleware, async (req, res) => {
+router.put("/produtos/:id/vendido", authMiddleware, adminOnly, async (req, res) => {
   try {
-    const { rows } = await pool.query("SELECT usuario_id FROM produtos WHERE id=$1", [req.params.id]);
+    const { rows } = await pool.query("SELECT id FROM produtos WHERE id=$1", [req.params.id]);
     if (rows.length === 0) return res.status(404).json({ success: false, message: "Produto não encontrado." });
-    if (rows[0].usuario_id !== req.usuario.usuario_id) {
-      return res.status(403).json({ success: false, message: "Não autorizado." });
-    }
     await pool.query("UPDATE produtos SET vendido = true WHERE id=$1", [req.params.id]);
     res.json({ success: true, message: "Produto marcado como vendido." });
   } catch (err) {
@@ -244,44 +351,14 @@ router.put("/produtos/:id/vendido", authMiddleware, async (req, res) => {
   }
 });
 
-// ---------- CUPONS ----------
-
-router.get("/cupons", async (req, res) => {
+router.delete("/produtos/:id", authMiddleware, adminOnly, async (req, res) => {
   try {
-    const { rows } = await pool.query("SELECT codigo, desconto FROM cupons ORDER BY codigo");
-    res.json({ success: true, results: rows });
+    const { rowCount } = await pool.query("DELETE FROM produtos WHERE id=$1", [req.params.id]);
+    if (rowCount === 0) return res.status(404).json({ success: false, message: "Produto não encontrado." });
+    res.json({ success: true, message: "Peça removida." });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ success: false, message: "Erro ao listar cupons." });
-  }
-});
-
-router.post("/cupons", authMiddleware, async (req, res) => {
-  const { codigo, desconto } = req.body;
-  if (!codigo || codigo.length < 2 || !(desconto > 0 && desconto < 1)) {
-    return res.status(400).json({ success: false, message: "Código e desconto (entre 0 e 1) são obrigatórios." });
-  }
-  try {
-    await pool.query("INSERT INTO cupons (codigo, desconto) VALUES ($1,$2)", [codigo.toUpperCase(), desconto]);
-    res.status(201).json({ success: true, message: "Cupom adicionado!" });
-  } catch (err) {
-    if (err.code === "23505") {
-      return res.status(409).json({ success: false, message: "Já existe esse cupom." });
-    }
-    console.error(err);
-    res.status(500).json({ success: false, message: "Erro ao adicionar cupom." });
-  }
-});
-
-router.post("/cupons/validar", async (req, res) => {
-  const { codigo } = req.body;
-  try {
-    const { rows } = await pool.query("SELECT desconto FROM cupons WHERE codigo=$1", [(codigo || "").toUpperCase()]);
-    if (rows.length === 0) return res.json({ success: true, valido: false });
-    res.json({ success: true, valido: true, desconto: Number(rows[0].desconto) });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: "Erro ao validar cupom." });
+    res.status(500).json({ success: false, message: "Erro ao remover peça." });
   }
 });
 
@@ -317,10 +394,21 @@ router.get("/trocas/:id", async (req, res) => {
   }
 });
 
-router.post("/trocas", authMiddleware, async (req, res) => {
+router.post("/trocas", authMiddleware, writeLimiter, async (req, res) => {
   const { nome, descricao, trocaPor, imagens } = req.body;
   if (!nome || !trocaPor || !Array.isArray(imagens) || imagens.length === 0) {
     return res.status(400).json({ success: false, message: "Preencha nome, troca desejada e ao menos uma imagem." });
+  }
+  const erroNome = textoInvalido(nome, { min: 2, max: 100, label: "Nome" });
+  if (erroNome) return res.status(400).json({ success: false, message: erroNome });
+  const erroTroca = textoInvalido(trocaPor, { min: 1, max: 150, label: "Troca desejada" });
+  if (erroTroca) return res.status(400).json({ success: false, message: erroTroca });
+  if (descricao) {
+    const erroDesc = textoInvalido(descricao, { min: 1, max: 600, label: "Descrição" });
+    if (erroDesc) return res.status(400).json({ success: false, message: erroDesc });
+  }
+  if (imagens.length > 3 || !imagens.every(isDataUrlImagem)) {
+    return res.status(400).json({ success: false, message: "Envie até 3 imagens válidas." });
   }
   try {
     const { rows } = await pool.query(
@@ -365,11 +453,13 @@ router.get("/trocas/:id/mensagens", authMiddleware, async (req, res) => {
   }
 });
 
-router.post("/trocas/:id/mensagens", authMiddleware, async (req, res) => {
+router.post("/trocas/:id/mensagens", authMiddleware, writeLimiter, async (req, res) => {
   const { texto } = req.body;
   if (!texto || !texto.trim()) {
     return res.status(400).json({ success: false, message: "Mensagem vazia." });
   }
+  const erroTexto = textoInvalido(texto, { min: 1, max: 1000, label: "Mensagem" });
+  if (erroTexto) return res.status(400).json({ success: false, message: erroTexto });
   try {
     const { rows: trocaRows } = await pool.query("SELECT id FROM trocas WHERE id=$1", [req.params.id]);
     if (trocaRows.length === 0) return res.status(404).json({ success: false, message: "Troca não encontrada." });

@@ -37,7 +37,7 @@ document.getElementById("signInForm").addEventListener("submit", function (e) {
         msg.classList.add("success");
         msg.textContent = "Conta criada! Redirecionando para o login...";
         setTimeout(() => {
-          window.location.href = "/index.html?cadastro=sucesso";
+          window.location.href = "/login.html?cadastro=sucesso";
         }, 900);
       } else {
         msg.classList.add("error");

@@ -1,63 +1,132 @@
 /* Menu compartilhado por todas as páginas — fonte única de verdade.
-   Nunca duplique essas regras no <style> de uma página; isso é o que
-   causava o menu "pulando" entre páginas (logo, fonte e altura diferentes). */
+   Nunca duplique essas regras no CSS de uma página; isso evita o menu
+   "pulando" de tamanho/posição entre páginas. */
 
 #nav {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  background: #232426;
-  color: #fff;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  padding: 18px 0 14px 0;
-  gap: 15px;
-  font-size: 1.05rem;
-  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.08);
-  box-sizing: border-box;
   z-index: 1000;
+  background: var(--bp-black, #0d0d0d);
+  color: #fff;
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.18);
 }
 
-#nav .logo {
-  height: 40px;
-  margin-right: 12px;
-  vertical-align: middle;
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 24px;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.75);
 }
 
-#nav a {
+.topbar a { color: inherit; text-decoration: none; }
+.topbar a:hover { color: #fff; }
+.topbar-msg { flex: 1; text-align: center; }
+
+.nav-main {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  padding: 13px 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: #fff;
+  flex-shrink: 0;
+}
+.brand .logo { height: 34px; width: 34px; border-radius: 7px; display: block; }
+.brand .wordmark { font-weight: 800; font-size: 1.28rem; letter-spacing: -0.01em; }
+
+.nav-links { display: flex; gap: 2px; flex-wrap: wrap; }
+.nav-links a {
   color: #fff;
   text-decoration: none;
-  font-weight: 500;
-  margin: 0 7px;
-  border-radius: 8px;
-  padding: 7px 18px;
-  transition: background 0.2s;
+  font-weight: 600;
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 9px 13px;
+  border-radius: 2px;
+  position: relative;
+}
+.nav-links a:hover { background: rgba(255, 255, 255, 0.08); }
+.nav-links a.selected::after {
+  content: "";
+  position: absolute;
+  left: 13px;
+  right: 13px;
+  bottom: 2px;
+  height: 2px;
+  background: #fff;
 }
 
-#nav a:hover,
-#nav a.selected {
-  background: rgba(108, 110, 254, 0.11);
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-left: auto;
 }
 
-#nav input[type="text"] {
-  box-sizing: border-box;
-  padding: 7px 12px;
-  margin: 0;
-  border-radius: 8px;
-  border: none;
-  outline: none;
-  background-color: #33353a;
+.nav-search input[type="text"] {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   color: #fff;
-  font-size: 1rem;
-  width: 180px;
-  flex: 0 0 auto;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  width: 160px;
+  outline: none;
+  transition: width 0.2s, background 0.2s;
+}
+.nav-search input::placeholder { color: rgba(255, 255, 255, 0.55); }
+.nav-search input:focus { background: rgba(255, 255, 255, 0.16); width: 210px; }
+
+.nav-enter-link {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.76rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 8px 17px;
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.nav-enter-link:hover { background: #fff; color: var(--bp-black, #0d0d0d); }
+
+.nav-logout {
+  color: rgba(255, 255, 255, 0.68);
+  text-decoration: none;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+.nav-logout:hover { color: #fff; }
+
+@media (max-width: 900px) {
+  .topbar-msg { display: none; }
 }
 
-@media (max-width: 500px) {
-  #nav {
-    font-size: 0.97rem;
-  }
+@media (max-width: 760px) {
+  .nav-main { gap: 16px; }
+  .nav-links { order: 3; width: 100%; gap: 0; }
+  .nav-search input[type="text"] { width: 130px; }
+  .nav-search input:focus { width: 150px; }
 }

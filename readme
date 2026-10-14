@@ -1,1 +1,6 @@
-npm install express mysql2 body-parser cors
+barpp — marketplace de tênis, peças e acessórios.
+
+npm install
+npm run dev          # roda local (ver .env.local)
+npm run init-db       # cria tabelas + seed (instalação nova)
+npm run migrate-categorias   # adiciona categoria/marca/condicao num banco já existente
