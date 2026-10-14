@@ -19,7 +19,7 @@ function renderCarousel() {
     slide.innerHTML = "";
     document.querySelector(".carousel-container").innerHTML = `
       <div class="empty-state">
-        <p>Novidades em breve. <a href="https://instagram.com/barpp.oficial" target="_blank" rel="noopener">Acompanhe no Instagram</a>.</p>
+        <p>Novidades em breve. <a href="https://instagram.com/barpp.br" target="_blank" rel="noopener">Acompanhe no Instagram</a>.</p>
       </div>`;
     return;
   }

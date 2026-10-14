@@ -14,8 +14,7 @@ function formatPreco(valor) {
 
 // @ da barpp no Instagram. Todo contato sobre uma peça acontece por lá —
 // não há checkout/pagamento nem número de telefone expostos no site.
-// TODO: trocar pelo @ real assim que o perfil da loja existir.
-const BARPP_INSTAGRAM = "barpp.oficial";
+const BARPP_INSTAGRAM = "barpp.br";
 
 function instagramProfileLink() {
   return "https://instagram.com/" + BARPP_INSTAGRAM;
